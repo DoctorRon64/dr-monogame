@@ -1,64 +1,59 @@
 ﻿using System;
+using CooleGame.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace CooleGame;
-
-public class GameManager : Game {
-    private GraphicsDeviceManager graphics;
-    private SpriteBatch spriteBatch;
-    private readonly GameObject2D ijsje = new();
+namespace CooleGame
+{
+    public class GameManager : Game
+    {
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
     
-    public GameManager()
-    {
-        graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
-    }
-
-    protected override void Initialize()
-    {
-        base.Initialize();
+        private readonly Alert playerJumpAlert = new();
+        private readonly AlertMonitor scoreMonitor = new();
         
-        spriteBatch = new SpriteBatch(GraphicsDevice);
-        ijsje.SetTexture(Content.Load<Texture2D>("ijsje"));
-        ijsje.SetScale(new Vector2(.1f));
-        
-        Console.WriteLine(" Initialize Game! 😨😨😨😲😲😲🥳🥳🥳");
-    }
-
-    protected override void Update(GameTime gameTime)
-    {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape)) {
-            Exit();
+        private readonly GameObject2D player = new();
+        private readonly InputHandler inputHandler = new();
+    
+        public GameManager()
+        {
+            Console.WriteLine("Initialized GameManager");
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            IsMouseVisible = true;
         }
 
-        Movelol();
-        Console.WriteLine(ijsje.Transform2D.Position);
+        protected override void Initialize()
+        {
+            base.Initialize();
         
-        GraphicsDevice.Clear(Color.Aquamarine);
-        ijsje.Update(spriteBatch);
+            spriteBatch = new(GraphicsDevice);
+            player.SetTexture(Content.Load<Texture2D>("ijsje"));
+            
+            player.SetScale(new Vector2(.1f));
+            player.SetRotation(90);
+
+            scoreMonitor.AddListener(playerJumpAlert, () => Keyboard.GetState().IsKeyDown(Keys.W));
+        }
+
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape)) {
+                Exit();
+            }
+
+            inputHandler.Update();
         
-        base.Update(gameTime);
-    }
-
-    private void Movelol() {
-        if (Keyboard.GetState().IsKeyDown(Keys.D)) {
-            ijsje.Move(1, 0);
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.A)) {
-            ijsje.Move(-1, 0);
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.W)) {
-            ijsje.Move(0, -1);
-        }
-
-        if (Keyboard.GetState().IsKeyDown(Keys.S)) {
-            ijsje.Move(0, 1);
+            GraphicsDevice.Clear(Color.Aquamarine);
+            spriteBatch.Begin();
+            player.Update(gameTime);
+            player.Draw(spriteBatch);
+            spriteBatch.End();
+        
+            base.Update(gameTime);
         }
     }
 }
