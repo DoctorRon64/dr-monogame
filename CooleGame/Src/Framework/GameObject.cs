@@ -4,16 +4,14 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace CooleGame.Framework
 {
-    public class GameObject2D {
+    public class GameObject {
         public Transform2D Transform2D = new();
         private Sprite2D sprite = new();
         public Vector2 Velocity { get; private set; } = Vector2.Zero;
         public Vector2 Acceleration { get; private set; } = Vector2.Zero;
         public float DragFactor { get; private set; } = 5f;
         
-        public void Update(GameTime gameTime) {
-            float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            
+        public void Update(float deltaTime) {
             Velocity += Acceleration * deltaTime;
             Velocity *= 1 - (DragFactor * deltaTime);
             Transform2D.Position += Velocity * deltaTime;
