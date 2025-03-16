@@ -13,18 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin IMG_6365.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:IMG_6365.png;enemy.png
-
 #begin signal-2025-03-15-020408.jpeg
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -33,7 +21,7 @@
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
+/processorParam:MakeSquare=True
 /processorParam:TextureFormat=Color
 /build:signal-2025-03-15-020408.jpeg;ijsje.jpeg
 

@@ -1,52 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using CooleGame.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace CooleGame
-{
-    public class InputHandler
-    {
-        public Alert<Keys> OnKeyPressedAlert { get; private set; } = new();
-        public Alert<Keys> OnKeyReleasedAlert { get; private set; } = new();
+namespace CooleGame;
 
-        private readonly HashSet<Keys> currentlyPressedKeys = [];
-        private readonly HashSet<Keys> previouslyPressedKeys = [];
+public class InputHandler {
+    private readonly Dictionary<Keys, HashSet<Signal>> keyBindings = new();
+    
+    //TODO Add support for gamepad
+    
+    public void Update() {
+        KeyboardState keyboardState = Keyboard.GetState();
+        Keys[] pressedKeys = keyboardState.GetPressedKeys();
 
-        public InputHandler()
-        {
-            Console.WriteLine("Initialize InputHandler");
-        }
-
-        public void Update()
-        {
-            KeyboardState keyboardState = Keyboard.GetState();
-
-            foreach (Keys key in keyboardState.GetPressedKeys())
-            {
-                if (currentlyPressedKeys.Contains(key)) continue;
-                OnKeyPressedAlert.Invoke(key);
-                currentlyPressedKeys.Add(key);
-            }
-
-            foreach (Keys key in previouslyPressedKeys.Where(key => !keyboardState.IsKeyDown(key)))
-            {
-                OnKeyReleasedAlert.Invoke(key);
-                currentlyPressedKeys.Remove(key);
+        foreach (Keys key in pressedKeys) {
+            if (!keyBindings.TryGetValue(key, out HashSet<Signal> signalList)) continue;
+            foreach (Signal signal in signalList) {
+                signal.Invoke();
             }
         }
+    }
 
-        public void BindKeyPressed(AlertBase.AlertDelegate<Keys> alertDelegate) =>
-            OnKeyPressedAlert.AddListener(alertDelegate);
+    public void BindKey(Keys key, SignalBase.SignalDelegate callback) {
+        if (!keyBindings.ContainsKey(key)) keyBindings[key] = new();
+        keyBindings[key].Add(new(callback));
+    }
 
-        public void BindKeyReleased(AlertBase.AlertDelegate<Keys> alertDelegate) =>
-            OnKeyReleasedAlert.AddListener(alertDelegate);
-
-        public void UnbindKeyPressed(AlertBase.AlertDelegate<Keys> alertDelegate) =>
-            OnKeyPressedAlert.RemoveListener(alertDelegate);
-
-        public void UnbindKeyReleased(AlertBase.AlertDelegate<Keys> alertDelegate) =>
-            OnKeyReleasedAlert.RemoveListener(alertDelegate);
+    public void UnbindKey(Keys key) {
+        if (!keyBindings.ContainsKey(key)) return;
+        keyBindings.Remove(key);
     }
 }
