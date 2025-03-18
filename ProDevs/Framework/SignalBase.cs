@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CooleGame.Framework
+namespace ProDevs.Framework
 {
     public abstract class SignalBase
     {

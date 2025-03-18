@@ -1,11 +1,10 @@
 ﻿using System;
-using CooleGame.Framework;
-using CooleGame.Managers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProDevs.Managers;
 
-namespace CooleGame;
+namespace ProDevs;
 
 public class GameManager : Game {
     private GraphicsDeviceManager graphics;
@@ -13,7 +12,7 @@ public class GameManager : Game {
     
     //Managers
     private readonly InputManager input = new();
-    private SceneManager sceneManager;
+    private Scene scene;
     public GameManager() {
         Console.WriteLine("Initialized GameManager");
         graphics = new(this);
@@ -24,7 +23,7 @@ public class GameManager : Game {
     protected override void Initialize() {
         base.Initialize();
         spriteBatch = new(GraphicsDevice);
-        sceneManager = new(Content);
+        scene = new(Content);
         
         InputManager.BindKey(Keys.Escape, Exit);
     }
@@ -32,7 +31,7 @@ public class GameManager : Game {
     protected override void Update(GameTime gameTime) {
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
-        sceneManager.Update(deltaTime);
+        scene.Update(deltaTime);
         InputManager.Update();
         
         base.Update(gameTime);
@@ -41,7 +40,7 @@ public class GameManager : Game {
         GraphicsDevice.Clear(Color.Aquamarine);
         
         spriteBatch.Begin();
-        sceneManager.Draw(spriteBatch);
+        scene.Draw(spriteBatch);
         spriteBatch.End();
         
         base.Draw(gameTime);

@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using CooleGame.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ProDevs.Framework;
+using ProDevs.Managers;
 
-namespace CooleGame.Managers;
+namespace ProDevs;
 
-public class SceneManager {
+public class Scene {
     private readonly List<GameObject> gameObjects = new();
-
     private readonly GameObject player = new();
-    public SceneManager(ContentManager content) {
+    public Scene(ContentManager content) {
         Console.WriteLine("Initializing SceneManager");
         
         player.SetTexture(content.Load<Texture2D>("ijsje"));

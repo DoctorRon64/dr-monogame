@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CooleGame;
+namespace ProDevs;
 
 public static class Program {
     public static void Main(string[] args) {

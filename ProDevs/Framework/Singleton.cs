@@ -1,4 +1,4 @@
-﻿namespace CooleGame.Framework;
+﻿namespace ProDevs.Framework;
 
 public class Singleton<T> where T : new() {
 

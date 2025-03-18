@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using CooleGame.Framework;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using ProDevs.Framework;
 
-namespace CooleGame.Managers;
+namespace ProDevs.Managers;
 
 public class InputManager : Singleton<InputManager> {
     private static readonly Dictionary<Keys, HashSet<Signal>> keyBindings = new();
@@ -26,7 +26,7 @@ public class InputManager : Singleton<InputManager> {
                 signal.Invoke();
             }
         }
-        
+            
         for (int i = 0; i < GamePad.MaximumGamePadCount; i++) {
             GamePadState gamePadState = GamePad.GetState((PlayerIndex)i);
 
@@ -38,7 +38,6 @@ public class InputManager : Singleton<InputManager> {
                     signal.Invoke();
                 }
             }
-
         }
     }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
 
-namespace CooleGame.Framework
+namespace ProDevs.Framework
 {
     public class Signal : SignalBase
     {

@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace CooleGame.Framework
+namespace ProDevs.Framework
 {
     public class GameObject {
         public Transform2D Transform2D = new();

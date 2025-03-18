@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace CooleGame.Framework
+namespace ProDevs.Framework
 {
     public struct Transform2D {
         public Vector2 Position = default;
