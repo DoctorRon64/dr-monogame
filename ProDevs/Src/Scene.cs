@@ -4,13 +4,15 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ProDevs.Framework;
+using ProDevs.Framework.Components;
+using ProDevs.Framework.Objects;
 using ProDevs.Managers;
 
 namespace ProDevs;
 
 public class Scene {
     private readonly List<GameObject> gameObjects = new();
-    private readonly GameObject player = new();
+    private readonly GameObject player = new(true);
     public Scene(ContentManager content) {
         Console.WriteLine("Initializing SceneManager");
         
@@ -18,11 +20,12 @@ public class Scene {
         player.SetScale(new(.1f));
         player.SetRotation(0);
         player.SetPosition(new(400, 400));
-
+        player.EnablePhysics();
+        
         AddObject(player);
         
         const float speed = 20;
-        InputManager.BindGamepadButton(Buttons.DPadLeft, ()=> player.Move(-1,0, speed));
+        InputManager.BindGamepadButton(Buttons.DPadLeft, ()=> player.(-1,0, speed));
         InputManager.BindGamepadButton(Buttons.DPadRight, ()=> player.Move(1,0, speed));
         InputManager.BindGamepadButton(Buttons.DPadUp, ()=> player.Move(0,-1, speed));
         InputManager.BindGamepadButton(Buttons.DPadDown, ()=> player.Move(0,1, speed));
