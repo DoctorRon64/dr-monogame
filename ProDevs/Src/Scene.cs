@@ -1,53 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using ProDevs.Framework;
-using ProDevs.Framework.Components;
-using ProDevs.Framework.Objects;
-using ProDevs.Managers;
+using ProDevs.Framework.ECS.Components;
+using ProDevs.Framework.ECS.Entity;
+using ProDevs.Framework.ECS.System;
 
 namespace ProDevs;
 
 public class Scene {
-    private readonly List<GameObject> gameObjects = new();
-    private readonly GameObject player = new(true);
-    public Scene(ContentManager content) {
-        Console.WriteLine("Initializing SceneManager");
+    public readonly GameObject Player = new();
+    public readonly RenderSystem Renderer = new();
+    
+    public Scene(ContentManager Content ) {
+        Player.AddComponent(new TransformComponent());
+        Player.AddComponent(new SpriteComponent());
+        Player.AddComponent(new PhysicsComponent());
         
-        player.SetTexture(content.Load<Texture2D>("ijsje"));
-        player.SetScale(new(.1f));
-        player.SetRotation(0);
-        player.SetPosition(new(400, 400));
-        player.EnablePhysics();
+        Player.GetComponent(out TransformComponent transform);
+        transform.SetScale(new(.3f));
+        transform.SetRotation(0);
+        transform.SetPosition(new(125, 125));
         
-        AddObject(player);
+        Player.GetComponent(out SpriteComponent sprite);
+        sprite.SetTexture("sprites/female", Content);
         
+        Renderer.Register(Player);
+        
+        /*
         const float speed = 20;
-        InputManager.BindGamepadButton(Buttons.DPadLeft, ()=> player.(-1,0, speed));
-        InputManager.BindGamepadButton(Buttons.DPadRight, ()=> player.Move(1,0, speed));
-        InputManager.BindGamepadButton(Buttons.DPadUp, ()=> player.Move(0,-1, speed));
-        InputManager.BindGamepadButton(Buttons.DPadDown, ()=> player.Move(0,1, speed));
+        InputManager.BindGamepadButton(Buttons.DPadLeft, ()=> physics.addforce));
+        InputManager.BindGamepadButton(Buttons.DPadRight, ()=> Player.Move(1,0, speed));
+        InputManager.BindGamepadButton(Buttons.DPadUp, ()=> Player.Move(0,-1, speed));
+        InputManager.BindGamepadButton(Buttons.DPadDown, ()=> Player.Move(0,1, speed));
         
-        InputManager.BindKey(Keys.A, () => player.Move(-1, 0, speed));
-        InputManager.BindKey(Keys.W, () => player.Move(0, -1, speed));
-        InputManager.BindKey(Keys.S, () => player.Move(0, 1, speed));
-        InputManager.BindKey(Keys.D, () => player.Move(1, 0, speed));        
-    }
-
-    public void AddObject(GameObject obj) => gameObjects.Add(obj);
-    public void RemoveObject(GameObject obj) => gameObjects.Remove(obj);
-
-    public void Update(float deltaTime) {
-        foreach (GameObject obj in gameObjects) {
-            obj.Update(deltaTime);
-        }
+        InputManager.BindKey(Keys.A, () => Player.Move(-1, 0, speed));
+        InputManager.BindKey(Keys.W, () => Player.Move(0, -1, speed));
+        InputManager.BindKey(Keys.S, () => Player.Move(0, 1, speed));
+        InputManager.BindKey(Keys.D, () => Player.Move(1, 0, speed));  */      
+        Console.WriteLine("Initialed SceneManager");
     }
 
     public void Draw(SpriteBatch spriteBatch) {
-        foreach (GameObject obj in gameObjects) {
-            obj.Draw(spriteBatch);
-        }
+        Renderer.Draw(spriteBatch);
     }
 }

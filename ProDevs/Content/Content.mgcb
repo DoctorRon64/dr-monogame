@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin signal-2025-03-15-020408.jpeg
+#begin sprites/bafkreigc2g2d6xo4lybbtm547hrsqsbcqzhicvizhudhwn2d2nukbdg3ca.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -21,7 +21,7 @@
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=True
+/processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:signal-2025-03-15-020408.jpeg;ijsje.jpeg
+/build:sprites/bafkreigc2g2d6xo4lybbtm547hrsqsbcqzhicvizhudhwn2d2nukbdg3ca.jpg;sprites/female.jpg
 
