@@ -11,6 +11,7 @@ namespace ProDevs.Framework.ECS.Entity {
 
         public GameObject() {
             Id = nextId++;
+            Console.WriteLine("Object created with Id: " + Id);
         }
 
         public void AddComponent<T>(T component) where T : Component => components[typeof(T)] = component;

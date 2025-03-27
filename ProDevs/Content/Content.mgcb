@@ -25,3 +25,15 @@
 /processorParam:TextureFormat=Color
 /build:sprites/bafkreigc2g2d6xo4lybbtm547hrsqsbcqzhicvizhudhwn2d2nukbdg3ca.jpg;sprites/female.jpg
 
+#begin sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,0,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg;sprites/yacht.jpeg
+
