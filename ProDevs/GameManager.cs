@@ -34,6 +34,7 @@ public class GameManager : Game {
         float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
         
         InputManager.Update();
+        scene.Update(deltaTime);
         
         base.Update(gameTime);
     }
