@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,8 +11,8 @@ using ProDevs.Framework.ECS.System;
 namespace ProDevs {
     public class Scene {
         private List<GameObject> gameObjects = new();
+        private CollisionSystem collisionSystem = new();
         public RenderSystem Renderer { get; private set; } = new();
-        public CollisionSystem CollisionSystem { get; private set; } = new();
         
         public readonly GameObject Player = new();
         public readonly GameObject Ship = new();
@@ -22,7 +23,7 @@ namespace ProDevs {
             Ship.GetComponent(out TransformComponent transformComponent);
         
             transformComponent.SetScale(new(.05f));
-            transformComponent.SetPosition(new(10, 400));
+            transformComponent.SetPosition(new(100, 400));
 
             Ship.GetComponent(out SpriteComponent spriteboat);
             spriteboat.SetTexture("sprites/yacht", content);
@@ -34,13 +35,13 @@ namespace ProDevs {
             Player.GetComponent(out TransformComponent transform);
             transform.SetScale(new(.3f));
             transform.SetRotation(0);
-            transform.SetPosition(new(125, 15));
+            transform.SetPosition(new(100, 15));
         
             Player.GetComponent(out SpriteComponent sprite);
             sprite.SetTexture("sprites/female", content);
 
-            Player.AddComponent(new BoxCollider(sprite.GetTextureSize()));
-            Ship.AddComponent(new BoxCollider(spriteboat.GetTextureSize()));
+            Player.AddComponent(new BoxCollider(Player, new Vector2(200, 200)));
+            Ship.AddComponent(new CircleCollider(Ship, 100));
             
             Renderer.Register(Player);
             Renderer.Register(Ship);
@@ -59,15 +60,30 @@ namespace ProDevs {
             InputManager.BindKey(Keys.W, () => Player.Move(0, -1, speed));
             InputManager.BindKey(Keys.S, () => Player.Move(0, 1, speed));
             InputManager.BindKey(Keys.D, () => Player.Move(1, 0, speed));  */
+            
             Console.WriteLine("Initialed SceneManager");
         }
 
         public void Update(float deltaTime) {
-            Player.GetComponent(out RigidBodyComponent rigidBodyComponent);
-            Player.GetComponent(out TransformComponent transformComponent);
-            rigidBodyComponent.Update(transformComponent, deltaTime);
-            
-            CollisionSystem.Update(gameObjects);
+            foreach (GameObject obj in gameObjects) {
+                if (obj.TryGetComponent(out TransformComponent transform) &&
+                    obj.TryGetComponent(out RigidBodyComponent rigidBody)) {
+                    rigidBody.Update(transform, deltaTime);
+                }
+
+                if (!obj.TryGetComponent(out Collider collider)) continue;
+                collider.UpdateBounds();
+                Console.WriteLine($"Updated Collider Bounds: {obj.Id} at {collider.Bounds}");
+            }
+
+            collisionSystem.BuildBvh(gameObjects.SelectMany(go => go.GetComponents<Collider>()).ToList());
+            List<(Collider, Collider)> collisions = collisionSystem.CheckCollisions();
+
+            Console.WriteLine($"Collisions Detected: {collisions.Count}");
+
+            foreach ((Collider colA, Collider colB) in collisions) {
+                Console.WriteLine($"Collision detected between {colA.Owner.Id} and {colB.Owner.Id}");
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch) {

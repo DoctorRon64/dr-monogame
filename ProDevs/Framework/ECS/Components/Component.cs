@@ -20,6 +20,7 @@ namespace ProDevs.Framework.ECS.Components {
         public Vector2 Scale = Vector2.One;
         public Vector2 Origin = default;
 
+        public Vector2 GetPosition() => Position;
         public void SetPosition(Vector2 position) => Position = position;
         public void SetRotation(float rotation) => Rotation = rotation;
         public void SetScale(Vector2 scale) => Scale = scale;
@@ -83,35 +84,89 @@ namespace ProDevs.Framework.ECS.Components {
             Acceleration = Vector2.Zero;
         }
     }
-
+    
     public abstract class Collider : Component {
-        public Rectangle Bounds { get; protected set; }
-        public bool IsTrigger { get; private set; } = false;
-        public Signal<GameObject> OnCollisionEnter { get; protected set; } = new();
-        public Signal<GameObject> OnCollisionStay { get; protected set; } = new();
-        public Signal<GameObject> OnCollisionExit { get; protected set; } = new();
+        public Rectangle Bounds;
+        public bool IsTrigger = false;
+        public GameObject Owner;
 
-        public void SetTrigger(bool isTrigger) => IsTrigger = isTrigger;
-        public abstract void UpdateBounds(TransformComponent transform);
+        public Collider(GameObject owner) =>  Owner = owner;
+
+        public abstract void UpdateBounds();
+        public abstract bool Intersects(Collider other);
     }
+    
+    public sealed class BoxCollider : Collider {
+        public Vector2 Size { get; private set; }
+    
+        public BoxCollider(GameObject owner, Vector2 size) : base(owner) {
+            Size = size;
+            UpdateBounds();
+        }
 
-    public class BoxCollider : Collider {
-        private readonly Vector2 size;
-
-        public BoxCollider(Vector2 size) => this.size = size;
-        public BoxCollider(float x, float y) => this.size = new(x, y);
-
-        public override void UpdateBounds(TransformComponent transform) {
-            Bounds = new(
-                (int)(transform.Position.X - size.X / 2),
-                (int)(transform.Position.Y - size.Y / 2),
-                (int)size.X,
-                (int)size.Y
+        public override void UpdateBounds() {
+            if (!Owner.TryGetComponent(out TransformComponent transform)) return;
+            Bounds = new Rectangle(
+                (int)(transform.Position.X - Size.X / 2),
+                (int)(transform.Position.Y - Size.Y / 2),
+                (int)Size.X,
+                (int)Size.Y
             );
+        }
+
+        public override bool Intersects(Collider other) {
+            if (other is BoxCollider box) {
+                return Bounds.Intersects(box.Bounds);
+            }
+            return false;
         }
     }
 
-    public class AudioComponent : Component { }
+    public sealed class CircleCollider : Collider {
+        public float Radius { get; private set; }
 
-    public class AnimationComponent : Component { }
+        public CircleCollider(GameObject owner, float radius) : base(owner) {
+            Radius = radius;
+            UpdateBounds();
+        }
+
+        public override void UpdateBounds() {
+            if (!Owner.TryGetComponent(out TransformComponent transform)) return;
+            Bounds = new Rectangle(
+                (int)(transform.Position.X - Radius),
+                (int)(transform.Position.Y - Radius),
+                (int)(Radius * 2),
+                (int)(Radius * 2)
+            );
+        }
+
+        public override bool Intersects(Collider other) {
+            switch (other) {
+                case CircleCollider circle: {
+                    float distance = Vector2.Distance(Owner.GetComponent<TransformComponent>().Position,
+                        circle.Owner.GetComponent<TransformComponent>().Position);
+                    bool result = distance <= (Radius + circle.Radius);
+                    Console.WriteLine($"Checking Circle-Circle Collision: {Owner.Id} vs {circle.Owner.Id} -> {result}");
+                    return result;
+                }
+                case BoxCollider box: {
+                    // Circle vs AABB intersection check
+                    Vector2 closestPoint = new(
+                        MathHelper.Clamp(Owner.GetComponent<TransformComponent>().Position.X, box.Bounds.Left, box.Bounds.Right),
+                        MathHelper.Clamp(Owner.GetComponent<TransformComponent>().Position.Y, box.Bounds.Top, box.Bounds.Bottom)
+                    );
+
+                    float distance = Vector2.Distance(Owner.GetComponent<TransformComponent>().Position, closestPoint);
+                    bool result = distance < Radius;
+                    Console.WriteLine($"Checking Circle-Box Collision: {Owner.Id} vs {box.Owner.Id} -> {result}");
+                    return result;
+                }
+                default:
+                    return false;
+            }
+        }
+    }
+
+
+    
 }
