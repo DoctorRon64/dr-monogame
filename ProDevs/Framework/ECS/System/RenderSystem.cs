@@ -10,9 +10,7 @@ namespace ProDevs.Framework.ECS.System {
     public class RenderSystem {
         private readonly List<GameObject> renderableEntities = new();
   
-        public RenderSystem() {
-            Console.WriteLine("Initializing RenderSystem");
-        }
+        public RenderSystem() => Console.WriteLine("Initializing RenderSystem");
 
         public void Register(GameObject gameObject) => renderableEntities.Add(gameObject);
         public void Unregister(GameObject gameObject) => renderableEntities.Remove(gameObject);

@@ -38,10 +38,10 @@ namespace ProDevs {
             transform.SetPosition(new(100, 15));
         
             Player.GetComponent(out SpriteComponent sprite);
-            sprite.SetTexture("sprites/female", content);
+            sprite.SetTexture("sprites/man", content);
 
-            Player.AddComponent(new BoxCollider(Player, new Vector2(200, 200)));
-            Ship.AddComponent(new CircleCollider(Ship, 100));
+            Player.AddComponent(new CircleCollider(Player, 9.5f));
+            Ship.AddComponent(new CircleCollider(Ship, 12.4f));
             
             Renderer.Register(Player);
             Renderer.Register(Ship);
@@ -59,7 +59,8 @@ namespace ProDevs {
             InputManager.BindKey(Keys.A, () => Player.Move(-1, 0, speed));
             InputManager.BindKey(Keys.W, () => Player.Move(0, -1, speed));
             InputManager.BindKey(Keys.S, () => Player.Move(0, 1, speed));
-            InputManager.BindKey(Keys.D, () => Player.Move(1, 0, speed));  */
+            InputManager.BindKey(Keys.D, () => Player.Move(1, 0, speed));  
+            */
             
             Console.WriteLine("Initialed SceneManager");
         }
@@ -73,14 +74,13 @@ namespace ProDevs {
 
                 if (!obj.TryGetComponent(out Collider collider)) continue;
                 collider.UpdateBounds();
-                Console.WriteLine($"Updated Collider Bounds: {obj.Id} at {collider.Bounds}");
             }
-
+            
+            // Build BVH for optimized broad-phase collision detection
             collisionSystem.BuildBvh(gameObjects.SelectMany(go => go.GetComponents<Collider>()).ToList());
-            List<(Collider, Collider)> collisions = collisionSystem.CheckCollisions();
-
-            Console.WriteLine($"Collisions Detected: {collisions.Count}");
-
+           
+            // Detect and process collisions
+            collisionSystem.CheckCollisions(out List<(Collider, Collider)> collisions);
             foreach ((Collider colA, Collider colB) in collisions) {
                 Console.WriteLine($"Collision detected between {colA.Owner.Id} and {colB.Owner.Id}");
             }

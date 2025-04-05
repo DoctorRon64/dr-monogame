@@ -21,8 +21,9 @@ namespace ProDevs.Framework.ECS.Entity {
         public T GetComponent<T>() where T : Component => (T)components[typeof(T)];
         
         public bool TryGetComponent<T>(out T component) where T : Component {
-            if (components.TryGetValue(typeof(T), out Component storedComponent)) {
-                component = (T)storedComponent;
+            foreach (Component storedComponent in components.Values) {
+                if (storedComponent is not T matchedComponent) continue;
+                component = matchedComponent;
                 return true;
             }
 

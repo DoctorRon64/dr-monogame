@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin sprites/bafkreigc2g2d6xo4lybbtm547hrsqsbcqzhicvizhudhwn2d2nukbdg3ca.jpg
+#begin sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/bafkreigc2g2d6xo4lybbtm547hrsqsbcqzhicvizhudhwn2d2nukbdg3ca.jpg;sprites/female.jpg
+/build:sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg;sprites/man.jpg
 
 #begin sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg
 /importer:TextureImporter
