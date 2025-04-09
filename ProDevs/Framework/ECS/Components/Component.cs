@@ -1,29 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Content; 
 using Microsoft.Xna.Framework.Graphics;
-using ProDevs.Framework.ECS.Entity;
 using ProDevs.Framework.Interfaces;
+using NVector2 = System.Numerics.Vector2;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace ProDevs.Framework.ECS.Components {
     public abstract class Component {
-        private GameObject AttachedEntity { get; set; } = null;
-
-        public void SetEntity(GameObject entity) => AttachedEntity = entity;
-        public GameObject GetEntity() => AttachedEntity;
+        private Entity.Entity AttachedEntity { get; set; } = null;
+        public void SetEntity(Entity.Entity entity) => AttachedEntity = entity;
+        public Entity.Entity GetEntity() => AttachedEntity;
     }
 
-    public class TransformComponent : Component {
+    public class TransformComponent : Component
+    {
         public Vector2 Position = default;
         public float Rotation = 0;
         public Vector2 Scale = Vector2.One;
         public Vector2 Origin = default;
-
-        public Vector2 GetPosition() => Position;
-        public void SetPosition(Vector2 position) => Position = position;
-        public void SetRotation(float rotation) => Rotation = rotation;
-        public void SetScale(Vector2 scale) => Scale = scale;
+        
+        public static implicit operator NVector2(TransformComponent transform) => new(transform.Position.X, transform.Position.Y);
+        public static implicit operator TransformComponent(NVector2 newPos) => new() { Position = new(newPos.X, newPos.Y) };
+        
+        public NVector2 GetScaleAsNumerics() => new(Scale.X, Scale.Y);
+        public void SetScaleAsNumerics(NVector2 newScale) => Scale = newScale;
     }
 
     public class SpriteComponent : Component, IRenderable {
@@ -50,8 +51,9 @@ namespace ProDevs.Framework.ECS.Components {
             texture = result;
         }
         
-        public Vector2 GetTextureSize() => new(TextureWidth, TextureHeight);
+        public Vector2 GetSize() => new(TextureWidth, TextureHeight);
         public Texture2D GetTexture() => texture;
+        
         public Color GetColor() => color;
         public SpriteEffects GetSpriteEffects() => effects;
         
@@ -68,7 +70,7 @@ namespace ProDevs.Framework.ECS.Components {
 
         public void ApplyForce(Vector2 force) => Acceleration += force / Mass;
 
-        public void HandleCollision(GameObject other) {
+        public void HandleCollision(Entity.Entity other) {
             Velocity = Vector2.Zero;
             Acceleration = Vector2.Zero;
         }
@@ -76,7 +78,7 @@ namespace ProDevs.Framework.ECS.Components {
         public void Update(TransformComponent transform, float deltaTime) {
             if (IsKinematic) return;
 
-            ApplyForce(new Vector2(0, Gravity * Mass));
+            ApplyForce(new(0, Gravity * Mass));
             Velocity += Acceleration * deltaTime;
             Velocity *= Drag;
 

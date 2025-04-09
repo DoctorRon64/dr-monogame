@@ -1,21 +1,25 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using ProDevs.Framework.ECS.Entity;
+using ProDevs.Framework.ECS.System;
 
 namespace ProDevs.Framework.ECS.Components {
-    public abstract class Collider(GameObject owner) : Component {
+    public abstract class Collider(Entity.Entity owner) : Component {
         public Rectangle Bounds { get; protected set; }
         public bool IsTrigger = false;
-        public GameObject Owner { get; private set; } = owner;
+        public Entity.Entity Owner { get; private set; } = owner;
         public TransformComponent Transform => Owner?.GetComponent<TransformComponent>();
         public abstract void UpdateBounds();
         public abstract bool Intersects(Collider other);
+        public abstract void ResolveCollision(Collider other);
+        public abstract void ResolveAgainst(BoxCollider box);
+        public abstract void ResolveAgainst(CircleCollider circle);
     }
     
     public sealed class BoxCollider : Collider {
         public Vector2 Size { get; private set; }
     
-        public BoxCollider(GameObject owner, Vector2 size) : base(owner) {
+        public BoxCollider(Entity.Entity owner, Vector2 size) : base(owner) {
             Size = size;
             UpdateBounds();
         }
@@ -37,12 +41,24 @@ namespace ProDevs.Framework.ECS.Components {
                 _ => false
             };
         }
+        
+        public override void ResolveAgainst(BoxCollider box) {
+            Rectangle overlap = Rectangle.Intersect(Bounds, box.Bounds);
+            if (overlap.Width == 0 || overlap.Height == 0) return;
+
+            Vector2 push = overlap.Width < overlap.Height 
+                ? new(Bounds.Center.X < box.Bounds.Center.X ? -overlap.Width : overlap.Width, 0)
+                : new(0, Bounds.Center.Y < box.Bounds.Center.Y ? -overlap.Height : overlap.Height);
+        }
+        
+        public override void ResolveCollision(Collider other) => other.ResolveAgainst(this);
+        public override void ResolveAgainst(CircleCollider circle) => circle.Intersects(this);
     }
 
     public sealed class CircleCollider : Collider {
         public float Radius { get; private set; }
         
-        public CircleCollider(GameObject owner, float radius) : base(owner) => Radius = radius;
+        public CircleCollider(Entity.Entity owner, float radius) : base(owner) => Radius = radius;
 
         public override void UpdateBounds() {
             Bounds = new(
@@ -53,28 +69,35 @@ namespace ProDevs.Framework.ECS.Components {
             );
         }
         
-        public override bool Intersects(Collider other) {
-            switch (other) {
-                case CircleCollider circle: {
-                    float dx = Transform.Position.X - circle.Transform.Position.X;
-                    float dy = Transform.Position.Y - circle.Transform.Position.Y;
-                    float distance = MathF.Sqrt(dx * dx + dy * dy);
-                    return distance < (this.Radius + circle.Radius);
-                }
+        public override bool Intersects(Collider other) => other switch {
+            CircleCollider circle => Vector2.Distance(Transform.Position, circle.Transform.Position) < Radius + circle.Radius,
+            BoxCollider box => Intersects(box),
+            _ => false
+        };
 
-                case BoxCollider box: {
-                    Vector2 closestPoint = new(
-                        MathHelper.Clamp(Transform.Position.X, box.Bounds.Left, box.Bounds.Right),
-                        MathHelper.Clamp(Transform.Position.Y, box.Bounds.Top, box.Bounds.Bottom)
-                    );
+        public override void ResolveCollision(Collider other) => other.ResolveAgainst(this);
+        
+        public override void ResolveAgainst(BoxCollider box) {
+            Vector2 closest = new(
+                MathHelper.Clamp(Transform.Position.X, box.Bounds.Left, box.Bounds.Right),
+                MathHelper.Clamp(Transform.Position.Y, box.Bounds.Top, box.Bounds.Bottom));
+            Vector2 diff = Transform.Position - closest;
 
-                    float distance = Vector2.Distance(Transform.Position, closestPoint);
-                    return distance < Radius;
-                }
+            float distance = diff.Length();
+            if (distance == 0 || distance >= Radius) return;
 
-                default:
-                    return false;
-            }
+            Vector2 push = Vector2.Normalize(diff) * (Radius - distance);
+            CollisionSystem.ApplyResolution(this, box, push);
+        }
+
+        public override void ResolveAgainst(CircleCollider circle) {
+            Vector2 delta = circle.Transform.Position - Transform.Position;
+            float distance = delta.Length();
+            float totalRadius = Radius + circle.Radius;
+            if (distance == 0 || distance >= totalRadius) return;
+
+            Vector2 push = Vector2.Normalize(delta) * (totalRadius - distance);
+            CollisionSystem.ApplyResolution(this, circle, -push);
         }
     }
 }
