@@ -16,17 +16,19 @@ namespace ProDevs.Framework.ECS.System {
         public void Unregister(Entity.Entity entity) => renderableEntities.Remove(entity);
         
         public void Draw(SpriteBatch spriteBatch) {
-            
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+    
             foreach (Entity.Entity entity in renderableEntities) {
                 SpriteComponent sprite = entity.GetComponent<SpriteComponent>();
                 TransformComponent transform = entity.GetComponent<TransformComponent>();
 
                 if (sprite.GetTexture() == null) continue;
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
+        
                 spriteBatch.Draw(sprite.GetTexture(), transform.Position, null, sprite.GetColor(),
                     transform.Rotation, transform.Origin, transform.Scale, sprite.GetSpriteEffects(), 0);
-                spriteBatch.End();
             }
+
+            spriteBatch.End();
         }
     }
 }

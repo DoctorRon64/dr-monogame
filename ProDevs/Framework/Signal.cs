@@ -9,7 +9,7 @@ namespace ProDevs.Framework
             AddListener(@delegate);
         }
         
-        public void AddListener(SignalDelegate signalDelegate) => Listeners.Add(signalDelegate);
+        public new void AddListener(SignalDelegate signalDelegate) => Listeners.Add(signalDelegate);
         public void RemoveListener (SignalDelegate signalDelegate) => Listeners.Remove(signalDelegate);
 
         public void Invoke()

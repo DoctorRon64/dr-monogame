@@ -33,22 +33,21 @@ namespace ProDevs {
         protected override void Initialize() {
             spriteBatch = new(GraphicsDevice);
             scene = new();
-            editorGui = new(scene);
             imGuiRenderer = new(this);
             imGuiRenderer.RebuildFontAtlas();
+            editorGui = new(scene, imGuiRenderer);
         
             //Set Entity
             Entity player = scene.CreateEntity("Player");
             player.AddComponent(new TransformComponent());
-            player.AddComponent(new RigidBodyComponent());
             player.AddComponent(new SpriteComponent());
             player.GetComponent(out SpriteComponent sprite);
             player.GetComponent(out TransformComponent transform);
             sprite.SetTexture("sprites/man", Content);
-            Vector2 newScale = new(sprite.GetSize().X / 2, sprite.GetSize().Y);
-            transform.Scale = newScale;
+            transform.Scale = new(0.5f);
             transform.Rotation = 0;
             transform.Position = new(10, 10);
+            transform.Origin = sprite.GetSize() / 2f;
         
             InputManager.BindKey(Keys.Escape, Exit);
             base.Initialize();
@@ -61,7 +60,7 @@ namespace ProDevs {
             imGuiRenderer.BeforeLayout(gameTime);
             editorGui.Draw(spriteBatch);
             ImGui.Render();
-        
+            
             //Logic
             InputManager.Update();
         

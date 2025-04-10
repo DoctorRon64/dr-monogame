@@ -30,7 +30,7 @@ namespace ProDevs.Framework.ECS.Components {
     public class SpriteComponent : Component, IRenderable {
         private Texture2D texture = null;
         private Vector2 spriteOffset = Vector2.Zero;
-        private readonly Color color = Color.White;
+        private Color color = Color.White;
         private SpriteEffects effects = SpriteEffects.None;
 
         private int TextureWidth => texture?.Width ?? 0;
@@ -52,12 +52,16 @@ namespace ProDevs.Framework.ECS.Components {
         }
         
         public Vector2 GetSize() => new(TextureWidth, TextureHeight);
+        public NVector2 GetSizeN() => new(TextureWidth, TextureHeight);
         public Texture2D GetTexture() => texture;
         
         public Color GetColor() => color;
+        public void SetColor(Color newColor) => color = newColor;
         public SpriteEffects GetSpriteEffects() => effects;
         
-        public void Offset(Vector2 offset) => spriteOffset = offset;
+        public void SetOffset(Vector2 offset) => spriteOffset = offset;
+        public Vector2 GetOffset() => spriteOffset;
+        public NVector2 GetOffsetN() => new(spriteOffset.X, spriteOffset.Y);
     }
 
     public class RigidBodyComponent : Component {
