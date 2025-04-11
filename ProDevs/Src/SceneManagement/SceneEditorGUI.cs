@@ -1,40 +1,29 @@
 ﻿using System;
 using System.Linq;
 using ImGuiNET;
-using ImGuiNET.SampleProgram.XNA;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.ImGuiNet;
 using ProDevs.Framework.ECS.Components;
 using ProDevs.Framework.ECS.Entity;
 using Vector2 = System.Numerics.Vector2;
 using Vector4 = System.Numerics.Vector4;
 
 namespace ProDevs {
-    public class SceneEditorGui {
-        private readonly Scene scene;
-        private readonly ImGuiRenderer imGuiRenderer;
+    public class SceneEditorGui(Scene scene, ImGuiRenderer imGuiRenderer) {
         private Entity selected;
-        
-        public SceneEditorGui(Scene scene, ImGuiRenderer renderer) {
-            this.scene = scene;
-            this.imGuiRenderer = renderer;
+
+        public void Draw() {
+            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            
+            HandleHierachy();
+            HandleInspector();
         }
-        
-        public void Draw(SpriteBatch spriteBatch) {
-            scene.Renderer.Draw(spriteBatch);
 
-            //The Hierachy
-            ImGui.SetNextWindowSize(new Vector2(400, 400), ImGuiCond.FirstUseEver);
-            ImGui.Begin("Hierarchy");
-            foreach (Entity entity in scene.Entities.Where(entity => ImGui.Selectable(entity.Name, entity == selected))) {
-                selected = entity;
-            }
-
-            ImGui.End();
-
-            //The Inspector
+        private void HandleInspector() {
             ImGui.SetNextWindowSize(new Vector2(400, 500), ImGuiCond.FirstUseEver);
-            ImGui.Begin("Inspector");
+            ImGui.Begin("Inspector", ImGuiWindowFlags.AlwaysAutoResize);
+                
             if (selected != null) {
                 string input2 = selected.GetEntityName();
                 if (ImGui.InputText("Name", ref input2, 64)) selected.SetEntityName(input2);
@@ -77,14 +66,14 @@ namespace ProDevs {
                         Color color = sprite.GetColor();
                         Vector4 colorVec = new(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
                         ImGui.ColorEdit4("Sprite Color", ref colorVec, ImGuiColorEditFlags.NoInputs); // Visual only
-                        
+
                         Color newcolor = new((byte)(colorVec.X * 255), (byte)(colorVec.Y * 255), (byte)(colorVec.Z * 255), (byte)(colorVec.W * 255));
                         sprite.SetColor(newcolor);
-                        
+
                         // SpriteEffects info
                         SpriteEffects effects = sprite.GetSpriteEffects();
                         ImGui.Text($"Sprite Effects: {effects}");
-                        
+
                         Vector2 offset = sprite.GetOffsetN();
                         if (ImGui.DragFloat2("Offset", ref offset)) {
                             sprite.SetOffset(offset);
@@ -96,6 +85,35 @@ namespace ProDevs {
             }
 
             ImGui.End();
+        }
+
+        private void HandleHierachy() {
+            ImGui.SetNextWindowSize(new(400, 500), ImGuiCond.FirstUseEver);
+            ImGui.Begin("Inspector", ImGuiWindowFlags.NoCollapse);
+    
+            string entityName = "New Entity";
+    
+            ImGui.Begin("Hierarchy");
+            if (ImGui.InputText("Entity Name", ref entityName, 64)) {
+                // Handle any updates to the entity name here if needed
+            }
+    
+            if (ImGui.Button("Create New Entity")) {
+                CreateNewEntity(entityName);
+            }
+    
+            foreach (Entity entity in scene.Entities.Where(entity => ImGui.Selectable(entity.Name, entity == selected))) {
+                selected = entity;
+            }
+
+            ImGui.End();
+        }
+        
+        private void CreateNewEntity(string entityName) {
+            
+            Entity newEntity = scene.CreateEntity(entityName);
+            newEntity.AddComponent(new TransformComponent());
+            newEntity.AddComponent(new SpriteComponent());
         }
     }
 }

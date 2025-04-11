@@ -8,7 +8,7 @@ using ProDevs.Framework.ECS.Components;
 using ProDevs.Framework.ECS.Entity;
 
 namespace ProDevs.Framework.ECS.System {
-    public class RenderSystem {
+    public class RenderSystem : Singleton<RenderSystem> {
         private readonly List<Entity.Entity> renderableEntities = new();
         public RenderSystem() => Console.WriteLine("Initializing RenderSystem");
 

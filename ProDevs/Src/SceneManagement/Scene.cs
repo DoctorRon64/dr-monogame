@@ -9,18 +9,17 @@ using ProDevs.Framework.ECS.System;
 namespace ProDevs {
     public class Scene {
         public List<Entity> Entities { get; private set; } = new();
-        public RenderSystem Renderer { get; private set; } = new();
         
         public Entity CreateEntity(string entityName) {
             Entity entity = new(entityName);
             Entities.Add(entity);
-            Renderer.Register(entity);
+            RenderSystem.Instance.Register(entity);
             return entity;
         }
 
         public void RemoveEntity(Entity entity) {
             Entities.Remove(entity);
-            Renderer.Unregister(entity);
+            RenderSystem.Instance.Unregister(entity);
         }
 
         public void Save(string path) {
