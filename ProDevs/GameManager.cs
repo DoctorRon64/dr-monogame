@@ -2,19 +2,15 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ProDevs.Managers;
 using ImGuiNET;
+using MonoEngine.Framework;
+using MonoEngine.Framework.Entity;
 using MonoGame.ImGuiNet;
-using ProDevs.Framework.ECS.Components;
-using ProDevs.Framework.ECS.Entity;
-using ProDevs.Framework.ECS.System;
 
-namespace ProDevs {
+namespace MonoEngine {
     public class GameManager : Game {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private readonly InputManager input = new();
-        private RenderSystem renderSystem = new();
 
         private SceneEditorGui editorGui;
         private ImGuiRenderer imGuiRenderer;
@@ -43,10 +39,10 @@ namespace ProDevs {
 
             //Set Entity
             Entity player = scene.CreateEntity("Player");
-            player.AddComponent(new TransformComponent());
+            player.AddComponent(new Transform());
             player.AddComponent(new SpriteComponent());
             player.GetComponent(out SpriteComponent sprite);
-            player.GetComponent(out TransformComponent transform);
+            player.GetComponent(out Transform transform);
             sprite.SetTexture("sprites/man", Content);
             transform.Scale = new(0.5f);
             transform.Rotation = 0;
@@ -70,7 +66,7 @@ namespace ProDevs {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.Aquamarine);
 
-            RenderSystem.Instance.Draw(spriteBatch); // Draw your game world
+            RenderManager.Instance.Draw(spriteBatch); // Draw your game world
             
             ImGui.Render(); // Ends ImGui frame
             imGuiRenderer.EndLayout(); // Draws ImGui UI

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using ProDevs.Framework;
 
-namespace ProDevs.Managers {
+namespace MonoEngine.Framework {
     public class InputManager : Singleton<InputManager> {
         private static readonly Dictionary<Keys, HashSet<Signal>> keyBindings = new();
         private static readonly Dictionary<Buttons, HashSet<Signal>> gamepadBindings = new();

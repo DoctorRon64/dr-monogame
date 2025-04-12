@@ -1,25 +1,20 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml;
-using ProDevs.Framework.ECS.Entity;
-using ProDevs.Framework.ECS.System;
 
-namespace ProDevs {
+namespace MonoEngine.Framework {
     public class Scene {
-        public List<Entity> Entities { get; private set; } = new();
+        public List<Entity.Entity> Entities { get; private set; } = new();
         
-        public Entity CreateEntity(string entityName) {
-            Entity entity = new(entityName);
+        public Entity.Entity CreateEntity(string entityName) {
+            Entity.Entity entity = new(entityName);
             Entities.Add(entity);
-            RenderSystem.Instance.Register(entity);
+            RenderManager.Instance.Register(entity);
             return entity;
         }
 
-        public void RemoveEntity(Entity entity) {
+        public void RemoveEntity(Entity.Entity entity) {
             Entities.Remove(entity);
-            RenderSystem.Instance.Unregister(entity);
+            RenderManager.Instance.Unregister(entity);
         }
 
         public void Save(string path) {
@@ -32,9 +27,9 @@ namespace ProDevs {
 
         public void Load(string path) {
             var json = File.ReadAllText(path);
-            Entities = JsonSerializer.Deserialize<List<Entity>>(json, new JsonSerializerOptions { 
+            Entities = JsonSerializer.Deserialize<List<Entity.Entity>>(json, new JsonSerializerOptions { 
                 PropertyNameCaseInsensitive = true 
-            }) ?? new List<Entity>();  // Fallback to empty list if deserialization fails
+            }) ?? new List<Entity.Entity>();  // Fallback to empty list if deserialization fails
         }
     }
 }

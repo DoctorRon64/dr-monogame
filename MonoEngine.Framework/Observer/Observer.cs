@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ProDevs.Framework {
+namespace MonoEngine.Framework {
     public class Observer {
         private readonly Dictionary<Delegate, SignalBase> alertListeners = new();
 

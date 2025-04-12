@@ -1,14 +1,13 @@
-﻿using System;
-using Microsoft.Xna.Framework;
-using ProDevs.Framework.ECS.Entity;
-using ProDevs.Framework.ECS.System;
+﻿using Microsoft.Xna.Framework;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-namespace ProDevs.Framework.ECS.Components {
+namespace MonoEngine.Framework {
     public abstract class Collider(Entity.Entity owner) : Component {
         public Rectangle Bounds { get; protected set; }
         public bool IsTrigger = false;
         public Entity.Entity Owner { get; private set; } = owner;
-        public TransformComponent Transform => Owner?.GetComponent<TransformComponent>();
+        public Transform Transform => Owner?.GetComponent<Transform>();
         public abstract void UpdateBounds();
         public abstract bool Intersects(Collider other);
         public abstract void ResolveCollision(Collider other);
@@ -25,7 +24,7 @@ namespace ProDevs.Framework.ECS.Components {
         }
 
         public override void UpdateBounds() {
-            if (!Owner.TryGetComponent(out TransformComponent transform)) return;
+            if (!Owner.TryGetComponent(out Transform transform)) return;
             Bounds = new Rectangle(
                 (int)(transform.Position.X - Size.X / 2),
                 (int)(transform.Position.Y - Size.Y / 2),
@@ -87,7 +86,7 @@ namespace ProDevs.Framework.ECS.Components {
             if (distance == 0 || distance >= Radius) return;
 
             Vector2 push = Vector2.Normalize(diff) * (Radius - distance);
-            CollisionSystem.ApplyResolution(this, box, push);
+            CollisionManager.ApplyResolution(this, box, push);
         }
 
         public override void ResolveAgainst(CircleCollider circle) {
@@ -97,7 +96,7 @@ namespace ProDevs.Framework.ECS.Components {
             if (distance == 0 || distance >= totalRadius) return;
 
             Vector2 push = Vector2.Normalize(delta) * (totalRadius - distance);
-            CollisionSystem.ApplyResolution(this, circle, -push);
+            CollisionManager.ApplyResolution(this, circle, -push);
         }
     }
 }

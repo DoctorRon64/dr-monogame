@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework.Input;
 
-namespace ProDevs.Framework
+namespace MonoEngine.Framework
 {
     public class Signal : SignalBase
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ProDevs;
+namespace MonoEngine;
 
 public static class Program {
     [STAThread]
