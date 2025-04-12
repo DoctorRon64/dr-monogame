@@ -14,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MonoGame.ImGuiNet\Monogame.ImGuiNet.csproj" />
+      <ProjectReference Include="..\MonoGame.ImGuiNet\MonoEngine.ImGuiNet.csproj" />
     </ItemGroup>
 
     <ItemGroup>

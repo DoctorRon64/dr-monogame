@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoEngine", "ProDevs\MonoEngine.csproj", "{4B0E1726-BE86-4D8B-B8D9-832E5A5720EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monogame.ImGuiNet", "MonoGame.ImGuiNet\Monogame.ImGuiNet.csproj", "{85010854-884F-4E50-BDC7-6E5D96DEABA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoEngine.ImGuiNet", "MonoGame.ImGuiNet\MonoEngine.ImGuiNet.csproj", "{85010854-884F-4E50-BDC7-6E5D96DEABA3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoEngine.Framework", "MonoEngine.Framework\MonoEngine.Framework.csproj", "{0A4F536C-3B87-4695-B0A2-BF13272BB828}"
 EndProject
