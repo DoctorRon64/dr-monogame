@@ -1,22 +1,80 @@
-﻿using ImGuiNET;
+﻿using System;
+using System.IO;
+using System.Linq;
+using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoEngine.Framework;
+using MonoEngine.Framework.Entity;
 using MonoGame.ImGuiNet;
 using Numerics_Vector2 = System.Numerics.Vector2;
 using Numerics_Vector4 = System.Numerics.Vector4;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-namespace MonoEngine.Framework {
-    public class SceneEditorGui(Scene scene, ImGuiRenderer imGuiRenderer) {
-        private Entity.Entity selected;
+public enum EditorMode {
+    Edit,
+    Play
+}
+
+namespace MonoEngine {
+    public class SceneEditorGui: Singleton<SceneEditorGui> {
+        private Entity selected;
+        private EditorMode currentMode = EditorMode.Edit;
+        
+        private Scene scene = null!;
+        private ImGuiRenderer imGuiRenderer = null!;
+
+        public void Initialize(Scene scene, ImGuiRenderer imGuiRenderer) {
+            this.imGuiRenderer = imGuiRenderer;
+            this.scene = scene;  
+        }
 
         public void Draw() {
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
             
+            Toolbar();
             HandleHierachy();
             HandleInspector();
         }
 
+        private void Toolbar() {
+            ImGui.SetNextWindowSize(new(800, 400), ImGuiCond.FirstUseEver);
+            ImGui.Begin("Toolbar");
+
+            switch (currentMode) {
+                case EditorMode.Edit:
+                    if (ImGui.Button("▶ Play")) EnterPlayMode();
+                    ImGui.SameLine();
+                    break;
+                case EditorMode.Play:
+                    if (ImGui.Button("■ Stop")) ExitPlayMode();
+                    ImGui.SameLine();
+                    break;
+                default:
+                    ImGui.Text("Unknown Editor Mode");
+                    break;
+            }
+            
+            string ScenePath = Path.Combine("Content", "Scenes", "scene.json");
+            if (ImGui.Button("Save")) scene.Save(ScenePath);
+            ImGui.SameLine();
+            if (ImGui.Button("Load")) scene.Load(ScenePath);
+            ImGui.SameLine();
+            
+            ImGui.End();
+        }
+        
+        private void EnterPlayMode() {
+            currentMode = EditorMode.Play;
+            Console.WriteLine("Enter Play Mode");
+        }
+
+        private void ExitPlayMode() {
+            scene = scene;
+            currentMode = EditorMode.Edit;
+            Console.WriteLine("Exit Play Mode");
+        }
+        
         private void HandleInspector() {
             ImGui.SetNextWindowSize(new(400, 500), ImGuiCond.FirstUseEver);
             ImGui.Begin("Inspector", ImGuiWindowFlags.AlwaysAutoResize);
@@ -99,7 +157,7 @@ namespace MonoEngine.Framework {
                 CreateNewEntity(entityName);
             }
     
-            foreach (Entity.Entity entity in scene.Entities.Where(entity => ImGui.Selectable(entity.Name, entity == selected))) {
+            foreach (Entity entity in scene.Entities.Where(entity => ImGui.Selectable(entity.Name, entity == selected))) {
                 selected = entity;
             }
 
@@ -108,7 +166,7 @@ namespace MonoEngine.Framework {
         
         private void CreateNewEntity(string entityName) {
             
-            Entity.Entity newEntity = scene.CreateEntity(entityName);
+            Entity newEntity = scene.CreateEntity(entityName);
             newEntity.AddComponent(new Transform());
             newEntity.AddComponent(new SpriteComponent());
         }

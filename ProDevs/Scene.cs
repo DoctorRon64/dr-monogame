@@ -1,18 +1,22 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using MonoEngine.Framework;
+using MonoEngine.Framework.Entity;
 
-namespace MonoEngine.Framework {
+namespace MonoEngine {
     public class Scene {
-        public List<Entity.Entity> Entities { get; private set; } = new();
+        public List<Entity> Entities { get; private set; } = new();
         
-        public Entity.Entity CreateEntity(string entityName) {
-            Entity.Entity entity = new(entityName);
+        public Entity CreateEntity(string entityName) {
+            Entity entity = new(entityName);
             Entities.Add(entity);
             RenderManager.Instance.Register(entity);
             return entity;
         }
 
-        public void RemoveEntity(Entity.Entity entity) {
+        public void RemoveEntity(Entity entity) {
             Entities.Remove(entity);
             RenderManager.Instance.Unregister(entity);
         }
@@ -26,10 +30,13 @@ namespace MonoEngine.Framework {
         }
 
         public void Load(string path) {
+            foreach (Entity t in Entities) RemoveEntity(t);
+    
             var json = File.ReadAllText(path);
-            Entities = JsonSerializer.Deserialize<List<Entity.Entity>>(json, new JsonSerializerOptions { 
+            Entities = JsonSerializer.Deserialize<List<Entity>>(json, new JsonSerializerOptions { 
                 PropertyNameCaseInsensitive = true 
-            }) ?? new List<Entity.Entity>();  // Fallback to empty list if deserialization fails
+            }) ?? new List<Entity>();
         }
+
     }
 }

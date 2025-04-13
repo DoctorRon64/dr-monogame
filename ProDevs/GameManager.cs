@@ -35,7 +35,9 @@ namespace MonoEngine {
             imGuiRenderer = new(this);
             ImGui.GetIO().Fonts.AddFontDefault();
             imGuiRenderer.RebuildFontAtlas();
-            editorGui = new(scene, imGuiRenderer);
+            
+            editorGui = new();
+            editorGui.Initialize(scene, imGuiRenderer);
 
             //Set Entity
             Entity player = scene.CreateEntity("Player");
