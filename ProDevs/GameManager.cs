@@ -50,7 +50,7 @@ namespace MonoEngine {
             transform.Rotation = 0;
             transform.Position = new(10, 10);
             transform.Origin = sprite.GetSize() / 2f;
-
+            
             InputManager.BindKey(Keys.Escape, Exit);
             base.Initialize();
         }

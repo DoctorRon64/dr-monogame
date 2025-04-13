@@ -33,6 +33,7 @@ public class SpriteComponent : Component {
     public Color GetColor() => color;
     public void SetColor(Color newColor) => color = newColor;
     public SpriteEffects GetSpriteEffects() => effects;
+    public void SetSpriteEffects(SpriteEffects newEffects) => newEffects = newEffects;
         
     public void SetOffset(Vector2 offset) => spriteOffset = offset;
     public Vector2 GetOffset() => spriteOffset;

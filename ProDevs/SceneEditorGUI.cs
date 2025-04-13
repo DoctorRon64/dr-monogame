@@ -11,15 +11,9 @@ using Numerics_Vector2 = System.Numerics.Vector2;
 using Numerics_Vector4 = System.Numerics.Vector4;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-public enum EditorMode {
-    Edit,
-    Play
-}
-
 namespace MonoEngine {
     public class SceneEditorGui: Singleton<SceneEditorGui> {
         private Entity selected;
-        private EditorMode currentMode = EditorMode.Edit;
         
         private Scene scene = null!;
         private ImGuiRenderer imGuiRenderer = null!;
@@ -32,47 +26,8 @@ namespace MonoEngine {
         public void Draw() {
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
             
-            Toolbar();
             HandleHierachy();
             HandleInspector();
-        }
-
-        private void Toolbar() {
-            ImGui.SetNextWindowSize(new(800, 400), ImGuiCond.FirstUseEver);
-            ImGui.Begin("Toolbar");
-
-            switch (currentMode) {
-                case EditorMode.Edit:
-                    if (ImGui.Button("▶ Play")) EnterPlayMode();
-                    ImGui.SameLine();
-                    break;
-                case EditorMode.Play:
-                    if (ImGui.Button("■ Stop")) ExitPlayMode();
-                    ImGui.SameLine();
-                    break;
-                default:
-                    ImGui.Text("Unknown Editor Mode");
-                    break;
-            }
-            
-            string ScenePath = Path.Combine("Content", "Scenes", "scene.json");
-            if (ImGui.Button("Save")) scene.Save(ScenePath);
-            ImGui.SameLine();
-            if (ImGui.Button("Load")) scene.Load(ScenePath);
-            ImGui.SameLine();
-            
-            ImGui.End();
-        }
-        
-        private void EnterPlayMode() {
-            currentMode = EditorMode.Play;
-            Console.WriteLine("Enter Play Mode");
-        }
-
-        private void ExitPlayMode() {
-            scene = scene;
-            currentMode = EditorMode.Edit;
-            Console.WriteLine("Exit Play Mode");
         }
         
         private void HandleInspector() {
@@ -124,10 +79,25 @@ namespace MonoEngine {
 
                         Color newcolor = new((byte)(colorVec.X * 255), (byte)(colorVec.Y * 255), (byte)(colorVec.Z * 255), (byte)(colorVec.W * 255));
                         sprite.SetColor(newcolor);
+                        
+                        SpriteEffects currentEffect = sprite.GetSpriteEffects();
+                        SpriteEffects[] effectOptions = (SpriteEffects[])Enum.GetValues(typeof(SpriteEffects));
+                        string comboLabel = currentEffect.ToString();
+                        if (ImGui.BeginCombo("Sprite Effects", comboLabel)) {
+                            foreach (SpriteEffects effect in effectOptions) {
+                                bool isSelected = currentEffect == effect;
 
-                        // SpriteEffects info
-                        SpriteEffects effects = sprite.GetSpriteEffects();
-                        ImGui.Text($"Sprite Effects: {effects}");
+                                if (ImGui.Selectable(effect.ToString(), isSelected)) {
+                                    sprite.SetSpriteEffects(effect);
+                                    currentEffect = effect;
+                                }
+
+                                if (isSelected) {
+                                    ImGui.SetItemDefaultFocus();
+                                }
+                            }
+                            ImGui.EndCombo();
+                        }
 
                         Numerics_Vector2 offset = sprite.GetOffsetN();
                         if (ImGui.DragFloat2("Offset", ref offset)) {
