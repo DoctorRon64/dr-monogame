@@ -12,11 +12,15 @@ namespace MonoEngine.Framework {
         public StateMachine(T blackboard, IState<T> startingState) {
             Blackboard = blackboard;
             currentState = startingState;
+            currentState.OnInitialize(this);
+            currentState.OnEnter();
         }
 
         public void Tick() {
             currentState?.OnUpdate();
         }
+        
+        public IState<T> GetCurrentState() => currentState;
         
         public void SwitchState<U>() where U : IState<T> {
             if (!allStates.TryGetValue(typeof(U), out var nextState)) {
@@ -48,6 +52,12 @@ namespace MonoEngine.Framework {
             allStates.Add(stateType, stateInstance);
             Console.WriteLine("initalize State: " + stateInstance);
             stateInstance.OnInitialize(this);
+        }
+        
+        public void AddState<U>(Func<U> stateFactory, bool switchTo = false) where U : IState<T> {
+            U stateInstance = stateFactory();
+            AddState(stateInstance);
+            if (switchTo) SwitchState<U>();
         }
 
         public void RemoveState<U>() {

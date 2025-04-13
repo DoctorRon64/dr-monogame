@@ -14,10 +14,12 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 namespace MonoEngine {
     public class SceneEditorGui: Singleton<SceneEditorGui> {
         private Entity selected;
-        
         private Scene scene = null!;
         private ImGuiRenderer imGuiRenderer = null!;
 
+        private string sceneName = "scene.json";
+        private bool saveMode = true;
+        
         public void Initialize(Scene scene, ImGuiRenderer imGuiRenderer) {
             this.imGuiRenderer = imGuiRenderer;
             this.scene = scene;  
@@ -26,8 +28,31 @@ namespace MonoEngine {
         public void Draw() {
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
             
+            Draw(scene);
             HandleHierachy();
             HandleInspector();
+        }
+        
+        public void Draw(Scene scene) {
+            ImGui.Begin("Scene Manager");
+
+            if (ImGui.RadioButton("Save", saveMode)) saveMode = true;
+            ImGui.SameLine();
+            if (ImGui.RadioButton("Load", !saveMode)) saveMode = false;
+
+            ImGui.InputText("Scene Name", ref sceneName, 256);
+
+            if (saveMode) {
+                if (ImGui.Button("Save Scene")) {
+                    scene.Save(sceneName);
+                }
+            } else {
+                if (ImGui.Button("Load Scene")) {
+                    scene.Load(sceneName);
+                }
+            }
+
+            ImGui.End();
         }
         
         private void HandleInspector() {
@@ -80,25 +105,20 @@ namespace MonoEngine {
                         Color newcolor = new((byte)(colorVec.X * 255), (byte)(colorVec.Y * 255), (byte)(colorVec.Z * 255), (byte)(colorVec.W * 255));
                         sprite.SetColor(newcolor);
                         
-                        SpriteEffects currentEffect = sprite.GetSpriteEffects();
-                        SpriteEffects[] effectOptions = (SpriteEffects[])Enum.GetValues(typeof(SpriteEffects));
-                        string comboLabel = currentEffect.ToString();
-                        if (ImGui.BeginCombo("Sprite Effects", comboLabel)) {
-                            foreach (SpriteEffects effect in effectOptions) {
-                                bool isSelected = currentEffect == effect;
+                        
+                        SpriteEffects effects = sprite.GetSpriteEffects();
+                        ImGui.Text("Sprite Effects:");
+                        bool flipH = (effects & SpriteEffects.FlipHorizontally) != 0;
+                        bool flipV = (effects & SpriteEffects.FlipVertically) != 0;
 
-                                if (ImGui.Selectable(effect.ToString(), isSelected)) {
-                                    sprite.SetSpriteEffects(effect);
-                                    currentEffect = effect;
-                                }
-
-                                if (isSelected) {
-                                    ImGui.SetItemDefaultFocus();
-                                }
-                            }
-                            ImGui.EndCombo();
+                        if (ImGui.Checkbox("Flip Horizontally", ref flipH)) {
+                            effects = flipH ? (effects | SpriteEffects.FlipHorizontally) : (effects & ~SpriteEffects.FlipHorizontally);
                         }
-
+                        if (ImGui.Checkbox("Flip Vertically", ref flipV)) {
+                            effects = flipV ? (effects | SpriteEffects.FlipVertically) : (effects & ~SpriteEffects.FlipVertically);
+                        }
+                        sprite.SetSpriteEffects(effects);
+                        
                         Numerics_Vector2 offset = sprite.GetOffsetN();
                         if (ImGui.DragFloat2("Offset", ref offset)) {
                             sprite.SetOffset(offset);
