@@ -15,7 +15,7 @@ public class RenderManager : BaseSingleton<RenderManager> {
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
         
         foreach (Entity entity in renderableEntities) {
-            SpriteComponent sprite = entity.GetComponent<SpriteComponent>();
+            Sprite sprite = entity.GetComponent<Sprite>();
             Transform transform = entity.GetComponent<Transform>();
 
             Texture2D texture2D = sprite.GetTexture();

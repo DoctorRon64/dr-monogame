@@ -12,11 +12,7 @@ namespace MonoEngine {
         private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private ImGuiRenderer imGuiRenderer;
-        
-        private Framework.Entity player;
-        
         private StateMachine<GameManager> gameStateManager;
-        private GuiManager GUI;
         
         public GameManager() {
             graphics = new(this);
@@ -32,15 +28,19 @@ namespace MonoEngine {
             Console.WriteLine("Initialized GameManager");
             gameStateManager = new(this, new MainMenuState());
             gameStateManager.AddState<PlayState>();
+            gameStateManager.AddState<EditorState>();
                 
             spriteBatch = new(GraphicsDevice);
             
             imGuiRenderer = new(this);
             ImGui.GetIO().Fonts.AddFontDefault();
             imGuiRenderer.RebuildFontAtlas();
-
-            GUI = new(player);
             
+            var entity = new Framework.Entity("Player");
+            entity.AddComponent(new Transform());
+            entity.AddComponent(new Sprite());
+            SceneManager.AddEntity(entity);
+
             InputManager.BindKey(Keys.Escape, Exit);
             base.Initialize();
         }
@@ -53,7 +53,6 @@ namespace MonoEngine {
             //Under here logic!
             InputManager.Update();
             gameStateManager.Update(gameTime);
-            GUI.Update(gameTime);
             
             base.Update(gameTime);
         }

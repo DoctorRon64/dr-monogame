@@ -9,12 +9,12 @@ namespace MonoEngine;
 public class MainMenuState : BaseState<GameManager> {
     public override void OnEnter() {
         InputManager.BindKey(Keys.Enter, () => StateMachine.SwitchState<PlayState>());
-        Console.WriteLine("Entered MainMenuState");
+        InputManager.BindKey(Keys.B, () => StateMachine.SwitchState<EditorState>());
     }
 
     public override void OnExit() {
-        Console.WriteLine("Exited MainMenuState");
         InputManager.UnbindKey(Keys.Enter);
+        InputManager.UnbindKey(Keys.B);
     }
 
     public override void OnUpdate(GameTime gameTime) {

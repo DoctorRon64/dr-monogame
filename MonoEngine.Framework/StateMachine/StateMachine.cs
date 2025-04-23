@@ -8,6 +8,7 @@ namespace MonoEngine.Framework {
         private IState<T> currentState;
         private readonly Dictionary<Type, IState<T>> allStates = new();
         public T Blackboard { get; private set; }
+
         public Signal<IState<T>> OnStateChanged;
         
         public StateMachine(T blackboard, IState<T> startingState) {
@@ -29,13 +30,13 @@ namespace MonoEngine.Framework {
         
         public void SwitchState<U>() where U : IState<T> {
             if (!allStates.TryGetValue(typeof(U), out var nextState)) {
-                Console.WriteLine($"[StateMachine] Tried to switch to missing state: {typeof(U).Name}");
+                Console.WriteLine($"[{Blackboard}] Tried to switch to missing state: {typeof(U).Name}");
                 return;
             }
 
             currentState?.OnExit();
             currentState = nextState;
-            Console.WriteLine($"[StateMachine] Switched to: {typeof(U).Name}");
+            Console.WriteLine($"[{Blackboard}] Switched to: {typeof(U).Name}");
             OnStateChanged?.Invoke(currentState);
             currentState.OnEnter();
         }

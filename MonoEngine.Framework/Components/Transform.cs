@@ -9,9 +9,18 @@ public class Transform : Component
     public Vector2 Scale = Vector2.One;
     public Vector2 Origin = default;
         
-    public static implicit operator Numerics_Vector2(Transform transform) => new(transform.Position.X, transform.Position.Y);
-    public static implicit operator Transform(Numerics_Vector2 newPos) => new() { Position = new(newPos.X, newPos.Y) };
-        
-    public Numerics_Vector2 GetScaleAsNumerics() => new(Scale.X, Scale.Y);
-    public void SetScaleAsNumerics(Numerics_Vector2 newScale) => Scale = newScale;
+    public Numerics_Vector2 PositionNumerics {
+        get => new(Position.X, Position.Y);
+        set => Position = new Vector2(value.X, value.Y);
+    }
+
+    public Numerics_Vector2 ScaleNumerics {
+        get => new(Scale.X, Scale.Y);
+        set => Scale = new Vector2(value.X, value.Y);
+    }
+    
+    public Numerics_Vector2 OriginNumerics {
+        get => new(Origin.X, Origin.Y);
+        set => Origin = new Vector2(value.X, value.Y);
+    }
 }
