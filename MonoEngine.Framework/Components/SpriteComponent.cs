@@ -9,12 +9,10 @@ public class SpriteComponent : Component {
     private Color color = Color.White;
     private SpriteEffects effects = SpriteEffects.None;
 
+    private string texturePath = string.Empty;
+    
     private int TextureWidth => texture?.Width ?? 0;
     private int TextureHeight => texture?.Height ?? 0;
-        
-    public void Draw(SpriteBatch spriteBatch) {
-        spriteBatch.Draw(texture, spriteOffset, color);
-    }
 
     public void SetTexture(string assetName, ContentManager content) {
         Texture2D result = content.Load<Texture2D>(assetName);
@@ -24,8 +22,12 @@ public class SpriteComponent : Component {
         }
 
         texture = result;
+        texturePath = assetName;
     }
         
+    public string GetTexturePath() => texturePath;
+    public string SetTexturePath(string assetName) => texturePath = assetName;
+    
     public Vector2 GetSize() => new(TextureWidth, TextureHeight);
     public System.Numerics.Vector2 GetSizeN() => new(TextureWidth, TextureHeight);
     public Texture2D GetTexture() => texture;

@@ -3,53 +3,43 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
+using MonoEngine.Entity;
 using MonoEngine.Framework;
-using MonoEngine.Framework.Entity;
 using MonoGame.ImGuiNet;
 
 namespace MonoEngine {
     public class GameManager : Game {
-        private GraphicsDeviceManager graphics;
+        private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-
-        private SceneEditorGui editorGui;
         private ImGuiRenderer imGuiRenderer;
-        private Scene scene;
-
+        
+        private Framework.Entity player;
+        
+        private StateMachine<GameManager> gameStateManager;
+        private GuiManager GUI;
+        
         public GameManager() {
-            Console.WriteLine("Initialized GameManager");
-
             graphics = new(this);
-            Content.RootDirectory = "Content";
+            Content.RootDirectory = "Assets";
             IsMouseVisible = true;
-
+            
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
         }
 
         protected override void Initialize() {
+            Console.WriteLine("Initialized GameManager");
+            gameStateManager = new(this, new MainMenuState());
+            gameStateManager.AddState<PlayState>();
+                
             spriteBatch = new(GraphicsDevice);
-            scene = new();
-
+            
             imGuiRenderer = new(this);
             ImGui.GetIO().Fonts.AddFontDefault();
             imGuiRenderer.RebuildFontAtlas();
-            
-            editorGui = new();
-            editorGui.Initialize(scene, imGuiRenderer);
 
-            //Set Entity
-            Entity player = scene.CreateEntity("Player");
-            player.AddComponent(new Transform());
-            player.AddComponent(new SpriteComponent());
-            player.GetComponent(out SpriteComponent sprite);
-            player.GetComponent(out Transform transform);
-            sprite.SetTexture("sprites/man", Content);
-            transform.Scale = new(0.5f);
-            transform.Rotation = 0;
-            transform.Position = new(10, 10);
-            transform.Origin = sprite.GetSize() / 2f;
+            GUI = new(player);
             
             InputManager.BindKey(Keys.Escape, Exit);
             base.Initialize();
@@ -59,8 +49,11 @@ namespace MonoEngine {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             imGuiRenderer.BeginLayout(gameTime); // Start ImGui frame
-            editorGui.Draw(); // Build ImGui UI (this must be AFTER NewFrame)   
-            InputManager.Update(); //Logic
+            
+            //Under here logic!
+            InputManager.Update();
+            gameStateManager.Update(gameTime);
+            GUI.Update(gameTime);
             
             base.Update(gameTime);
         }
@@ -72,7 +65,7 @@ namespace MonoEngine {
             
             ImGui.Render(); // Ends ImGui frame
             imGuiRenderer.EndLayout(); // Draws ImGui UI
-
+            
             base.Draw(gameTime);
         }
     }

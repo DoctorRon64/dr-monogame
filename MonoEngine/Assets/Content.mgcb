@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg;sprites/man.jpg
+/build:sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg;Sprites/man.jpg
 
 #begin sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg
 /importer:TextureImporter
@@ -35,5 +35,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg;sprites/yacht.jpeg
+/build:sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg;Sprites/yacht.jpeg
 

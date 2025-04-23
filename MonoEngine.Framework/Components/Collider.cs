@@ -3,10 +3,10 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace MonoEngine.Framework {
-    public abstract class Collider(Entity.Entity owner) : Component {
+    public abstract class Collider(Entity owner) : Component {
         public Rectangle Bounds { get; protected set; }
         public bool IsTrigger = false;
-        public Entity.Entity Owner { get; private set; } = owner;
+        public Entity Owner { get; private set; } = owner;
         public Transform Transform => Owner?.GetComponent<Transform>();
         public abstract void UpdateBounds();
         public abstract bool Intersects(Collider other);
@@ -18,7 +18,7 @@ namespace MonoEngine.Framework {
     public sealed class BoxCollider : Collider {
         public Vector2 Size { get; private set; }
     
-        public BoxCollider(Entity.Entity owner, Vector2 size) : base(owner) {
+        public BoxCollider(Entity owner, Vector2 size) : base(owner) {
             Size = size;
             UpdateBounds();
         }
@@ -57,7 +57,7 @@ namespace MonoEngine.Framework {
     public sealed class CircleCollider : Collider {
         public float Radius { get; private set; }
         
-        public CircleCollider(Entity.Entity owner, float radius) : base(owner) => Radius = radius;
+        public CircleCollider(Entity owner, float radius) : base(owner) => Radius = radius;
 
         public override void UpdateBounds() {
             Bounds = new(

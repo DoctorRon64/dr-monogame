@@ -1,4 +1,7 @@
-﻿namespace MonoEngine.Framework;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
+namespace MonoEngine.Framework;
 
 public abstract class BaseState<T> : IState<T> {
     protected StateMachine<T> StateMachine { get; private set; } = null!;
@@ -9,5 +12,7 @@ public abstract class BaseState<T> : IState<T> {
     }
     public abstract void OnEnter();
     public abstract void OnExit();
-    public virtual void OnUpdate() { }
+    public virtual void OnUpdate(GameTime gameTime) { }
+    public virtual void OnUpdate(float deltaTime) { }
+    public virtual void Draw(SpriteBatch spriteBatch) { }
 }

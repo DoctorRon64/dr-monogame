@@ -1,20 +1,20 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Framework;
-using MonoEngine.Framework.Entity;
 
 namespace MonoEngine.Framework;
 
-public class RenderManager : Singleton<RenderManager> {
-    private readonly List<Entity.Entity> renderableEntities = new();
+public class RenderManager : BaseSingleton<RenderManager> {
+    private readonly List<Entity> renderableEntities = new();
     public RenderManager() => Console.WriteLine("Initializing RenderSystem");
 
-    public void Register(Entity.Entity entity) => renderableEntities.Add(entity);
-    public void Unregister(Entity.Entity entity) => renderableEntities.Remove(entity);
-        
+    public void Register(Entity entity) => renderableEntities.Add(entity);
+    public void Unregister(Entity entity) => renderableEntities.Remove(entity);
+    public IReadOnlyList<Entity> GetAllEntities() => renderableEntities;    
+    
     public void Draw(SpriteBatch spriteBatch) {
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-    
-        foreach (Entity.Entity entity in renderableEntities) {
+        
+        foreach (Entity entity in renderableEntities) {
             SpriteComponent sprite = entity.GetComponent<SpriteComponent>();
             Transform transform = entity.GetComponent<Transform>();
 

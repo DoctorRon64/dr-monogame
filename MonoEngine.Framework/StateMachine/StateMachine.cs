@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Microsoft.Xna.Framework;
 
 namespace MonoEngine.Framework {
     public class StateMachine<T> {
@@ -12,12 +13,16 @@ namespace MonoEngine.Framework {
         public StateMachine(T blackboard, IState<T> startingState) {
             Blackboard = blackboard;
             currentState = startingState;
+            
+            Type type = startingState.GetType();
+            allStates.TryAdd(type, currentState);
+            
             currentState.OnInitialize(this);
             currentState.OnEnter();
         }
 
-        public void Tick() {
-            currentState?.OnUpdate();
+        public void Update(GameTime time) {
+            currentState?.OnUpdate(time);
         }
         
         public IState<T> GetCurrentState() => currentState;

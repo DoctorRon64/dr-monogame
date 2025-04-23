@@ -1,6 +1,4 @@
-﻿
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace MonoEngine.Framework;
 
@@ -14,7 +12,7 @@ public class CollisionManager(BvhNode root) {
         CheckCollisionsRecursive(root, collisions);
         return collisions;
     }
-
+    
     public void CheckCollisions(out List<(Collider, Collider)> collisions) {
         collisions = new();
         CheckCollisionsRecursive(root, collisions);

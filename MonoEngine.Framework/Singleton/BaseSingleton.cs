@@ -1,6 +1,6 @@
 ﻿namespace MonoEngine.Framework;
 
-public abstract class Singleton<T> where T : new() {
+public abstract class BaseSingleton<T> where T : new() {
 
     public static T Instance {
         get {

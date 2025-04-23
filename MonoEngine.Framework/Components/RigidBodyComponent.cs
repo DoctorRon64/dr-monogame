@@ -12,7 +12,7 @@ public class RigidBodyComponent : Component {
 
     public void ApplyForce(Vector2 force) => Acceleration += force / Mass;
 
-    public void HandleCollision(Entity.Entity other) {
+    public void HandleCollision(Entity other) {
         Velocity = Vector2.Zero;
         Acceleration = Vector2.Zero;
     }

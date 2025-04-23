@@ -1,42 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoEngine.Framework;
 
-namespace MonoEngine.Framework {
-    public class InputManager : Singleton<InputManager> {
+namespace MonoEngine {
+    public class InputManager : BaseSingleton<InputManager> {
         private static readonly Dictionary<Keys, HashSet<Signal>> keyBindings = new();
         private static readonly Dictionary<Buttons, HashSet<Signal>> gamepadBindings = new();
-    
+
+        private static KeyboardState prevKeyboardState;
+        private static readonly GamePadState[] prevGamePadStates = new GamePadState[GamePad.MaximumGamePadCount];
+
         ~InputManager() {
             keyBindings.Clear();
             gamepadBindings.Clear();
         }
-   
-        public static void Update() {
-        
-            KeyboardState keyboardState = Keyboard.GetState();
-            Keys[] pressedKeys = keyboardState.GetPressedKeys();
 
-            foreach (Keys key in pressedKeys) {
-                if (!keyBindings.TryGetValue(key, out HashSet<Signal> signalList)) continue;
-                foreach (Signal signal in signalList) {
+        public static void Update() {
+            KeyboardState currentKeyboardState = Keyboard.GetState();
+
+            // Safely iterate over a snapshot of keys
+            List<Keys> keys = new(keyBindings.Keys);
+            foreach (Keys key in keys.Where(key => currentKeyboardState.IsKeyDown(key) && !prevKeyboardState.IsKeyDown(key))) {
+                if (!keyBindings.TryGetValue(key, out HashSet<Signal> signals)) continue;
+                foreach (Signal signal in signals.ToArray()) {
                     signal.Invoke();
                 }
             }
-            
-            for (int i = 0; i < GamePad.MaximumGamePadCount; i++) {
-                GamePadState gamePadState = GamePad.GetState((PlayerIndex)i);
 
-                if (!gamePadState.IsConnected) continue;
-                foreach (Buttons button in Enum.GetValues<Buttons>()) {
-                    if (!gamePadState.IsButtonDown(button) ||
-                        !gamepadBindings.TryGetValue(button, out HashSet<Signal> buttonSignals)) continue;
-                    foreach (Signal signal in buttonSignals) {
+            // Gamepad input
+            for (int i = 0; i < GamePad.MaximumGamePadCount; i++) {
+                GamePadState currentGamePadState = GamePad.GetState((PlayerIndex)i);
+                if (!currentGamePadState.IsConnected) continue;
+
+                List<Buttons> buttons = new List<Buttons>(gamepadBindings.Keys);
+                foreach (Buttons button in buttons.Where(button => currentGamePadState.IsButtonDown(button) && !prevGamePadStates[i].IsButtonDown(button))) {
+                    if (!gamepadBindings.TryGetValue(button, out HashSet<Signal> signals)) continue;
+                    foreach (Signal signal in signals.ToArray()) {
                         signal.Invoke();
                     }
                 }
+                prevGamePadStates[i] = currentGamePadState;
             }
+            prevKeyboardState = currentKeyboardState;
         }
 
         public static void BindKey(Keys key, SignalBase.SignalDelegate callback) {
