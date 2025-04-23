@@ -10,25 +10,20 @@ public class Sprite : Component {
     private SpriteEffects effects = SpriteEffects.None;
 
     private string texturePath = string.Empty;
-    
     private int TextureWidth => texture?.Width ?? 0;
     private int TextureHeight => texture?.Height ?? 0;
 
     public void SetTexture(string assetName, ContentManager content) {
-        try {
-            Texture2D result = content.Load<Texture2D>(assetName);
-            if (result == null) {
-                Console.WriteLine("ERROR: Texture not found: " + assetName);
-                return;
-            }
-
-            texture = result;
-            texturePath = assetName;
-        } catch (Exception ex) {
-            Console.WriteLine($"Error loading texture {assetName}: {ex.Message}");
+        Texture2D result = content.Load<Texture2D>(assetName);
+        if (result == null) {
+            Console.WriteLine("ERROR: Texture not found: " + assetName);
+            return;
         }
-    }
         
+        texture = result;
+        texturePath = assetName;
+    }
+    
     public string GetTexturePath() => texturePath;
     public string SetTexturePath(string assetName) => texturePath = assetName;
     

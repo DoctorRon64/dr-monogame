@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
+using Microsoft.Xna.Framework.Content;
 using MonoEngine.Entity;
 using MonoEngine.Framework;
 using MonoGame.ImGuiNet;
@@ -11,8 +13,10 @@ namespace MonoEngine {
     public class GameManager : Game {
         private readonly GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        private ImGuiRenderer imGuiRenderer;
         private StateMachine<GameManager> gameStateManager;
+
+        private ImGuiRenderer imGuiRenderer;
+        private readonly Dictionary<string, IntPtr> textureMap = new();
         
         public GameManager() {
             graphics = new(this);
@@ -66,6 +70,17 @@ namespace MonoEngine {
             imGuiRenderer.EndLayout(); // Draws ImGui UI
             
             base.Draw(gameTime);
+        }
+        
+        public IntPtr BindTexture(GraphicsDevice device, ContentManager content, string assetPath) {
+            if (textureMap.TryGetValue(assetPath, out IntPtr ptr))
+                return ptr;
+
+            Texture2D texture = content.Load<Texture2D>(assetPath);
+            ptr = imGuiRenderer.BindTexture(texture); // ImGuiRenderer should be your active renderer
+            textureMap[assetPath] = ptr;
+
+            return ptr;
         }
     }
 }

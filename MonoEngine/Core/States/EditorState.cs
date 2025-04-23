@@ -4,7 +4,7 @@ using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoEngine.Framework;
-using MonoEngine.Framework.Utility;
+using MonoEngine.Utility;
 using Numerics_Vector2 = System.Numerics.Vector2;
 using VectorN3 = System.Numerics.Vector3;
 using VectorN4 = System.Numerics.Vector4;
@@ -66,7 +66,7 @@ public class EditorState : BaseState<GameManager> {
         ImGui.Text($"Entity ID: {entity.Id}");
         string name = entity.Name;
         ImGui.InputText("Name", ref Unsafe.AsRef(name), 100);
-
+        
         if (entity.TryGetComponent(out Transform transform)) {
             Numerics_Vector2 position = transform.PositionNumerics;
             Numerics_Vector2 scale = transform.ScaleNumerics;
@@ -101,7 +101,6 @@ public class EditorState : BaseState<GameManager> {
                 ImGui.EndCombo();
             }
 
-            // Optional: offset / color / effects, etc.
             Numerics_Vector2 offset = sprite.GetOffsetN();
             if (ImGui.DragFloat2("Offset", ref offset, 1f, -1000, 1000)) {
                 sprite.SetOffset(new Vector2(offset.X, offset.Y));

@@ -1,7 +1,4 @@
 ﻿using System;
-using MonoEngine.Framework;
-using MonoEngine.Framework.Utility;
-
 namespace MonoEngine;
 
 public static class Program {
