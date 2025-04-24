@@ -1,7 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.CompilerServices;
 using ImGuiNET;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoEngine.Framework;
 using MonoEngine.Utility;
@@ -13,8 +16,8 @@ namespace MonoEngine;
 
 public class EditorState : BaseState<GameManager> {
     private Framework.Entity selectedEntity;
-    private string selectedAsset = "";
-    
+    private string selectedAsset = string.Empty;
+
     public override void OnEnter() {
         AssetRegistry.Refresh();
         InputManager.BindKey(Keys.B, () => StateMachine.SwitchState<MainMenuState>());
@@ -31,26 +34,30 @@ public class EditorState : BaseState<GameManager> {
                 selectedEntity = entity;
             }
         }
+
         ImGui.End();
 
         ShowInspector(selectedEntity);
-        ShowAssetPanel(); // <- new!
+        ShowAssetPanel(Blackboard.Content); // <- new!
     }
-    
 
-    private void ShowAssetPanel() {
+    private void ShowAssetPanel(ContentManager content) {
         ImGui.Begin("Assets");
 
         foreach (string assetPath in AssetRegistry.SpritePaths) {
+            Texture2D texture = AssetRegistry.GetThumbnail(assetPath, content);
+            IntPtr texturePtr = texture.GetOpenGlTextureHandle();
+            if (texturePtr != IntPtr.Zero) {
+                ImGui.Image(texturePtr, new System.Numerics.Vector2(50, 50));
+            }
+
             if (ImGui.Selectable(assetPath)) {
-                // Handle selection and set sprite for the selected entity
                 Console.WriteLine($"Selected sprite: {assetPath}");
             }
-            
-            if (ImGui.Selectable(assetPath, selectedAsset == assetPath)) {
-                selectedAsset = assetPath;
-            }
+
+            ImGui.Spacing();
         }
+
         ImGui.End();
     }
 
@@ -65,8 +72,9 @@ public class EditorState : BaseState<GameManager> {
 
         ImGui.Text($"Entity ID: {entity.Id}");
         string name = entity.Name;
-        ImGui.InputText("Name", ref Unsafe.AsRef(name), 100);
-        
+        ImGui.InputText("Name", ref name, 100);
+        entity.Name = name;
+
         if (entity.TryGetComponent(out Transform transform)) {
             Numerics_Vector2 position = transform.PositionNumerics;
             Numerics_Vector2 scale = transform.ScaleNumerics;
@@ -85,25 +93,39 @@ public class EditorState : BaseState<GameManager> {
             transform.OriginNumerics = origin;
             transform.Rotation = rotation;
         }
-        
+
         if (entity.TryGetComponent(out Sprite sprite)) {
-            string currentPath = sprite.GetTexturePath();
+            string currentPath = sprite.GetTexturePath(); // Get the current texture path
 
             ImGui.Text("Sprite");
+
             if (ImGui.BeginCombo("Texture", string.IsNullOrEmpty(currentPath) ? "<None>" : currentPath)) {
                 foreach (string path in AssetRegistry.SpritePaths) {
                     bool isSelected = path == currentPath;
+
                     if (ImGui.Selectable(path, isSelected)) {
-                        sprite.SetTexture(path, Blackboard.Content);
+                        string assetName = Path.ChangeExtension(path, null);
+                        Console.WriteLine($"Loading texture: {assetName}");
+
+                        try {
+                            sprite.SetTexture(assetName, Blackboard.Content);
+                        }
+                        catch (Exception ex) {
+                            Console.WriteLine($"Failed to load texture '{assetName}': {ex.Message}");
+                        }
                     }
-                    if (isSelected) ImGui.SetItemDefaultFocus();
+
+                    if (isSelected) {
+                        ImGui.SetItemDefaultFocus();
+                    }
                 }
+
                 ImGui.EndCombo();
             }
 
             Numerics_Vector2 offset = sprite.GetOffsetN();
             if (ImGui.DragFloat2("Offset", ref offset, 1f, -1000, 1000)) {
-                sprite.SetOffset(new Vector2(offset.X, offset.Y));
+                sprite.Offset = new Vector2(offset.X, offset.Y);
             }
         }
 

@@ -18,11 +18,9 @@ public class RenderManager : BaseSingleton<RenderManager> {
             Sprite sprite = entity.GetComponent<Sprite>();
             Transform transform = entity.GetComponent<Transform>();
 
-            Texture2D texture2D = sprite.GetTexture();
-            if (texture2D == null) continue;
-        
-            spriteBatch.Draw(texture2D, transform.Position, null, sprite.GetColor(),
-                transform.Rotation, transform.Origin, transform.Scale, sprite.GetSpriteEffects(), 0);
+            Texture2D texture2D = sprite.Texture;
+            spriteBatch.Draw(texture2D, transform.Position, null, sprite.Color,
+                transform.Rotation, transform.Origin, transform.Scale, sprite.Effects, 0);
         }
 
         spriteBatch.End();
