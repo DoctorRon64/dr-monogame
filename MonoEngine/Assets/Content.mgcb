@@ -1,8 +1,7 @@
 
 #----------------------------- Global Properties ----------------------------#
-
-/outputDir:../bin/Debug/net8.0/Content
-/intermediateDir:../obj/Debug/net8.0/DesktopGL/Content
+/outputDir:../bin/DesktopGL/Content
+/intermediateDir:../obj/DesktopGL/Content
 /platform:DesktopGL
 /config:
 /profile:Reach

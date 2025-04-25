@@ -37,16 +37,12 @@
       <ProjectReference Include="..\MonoEngine.Framework\MonoEngine.Framework.csproj" />
       <ProjectReference Include="..\MonoGame.ImGuiNet\MonoEngine.ImGuiNet.csproj" />
     </ItemGroup>
+    <Import Project="$(NuGetPackageRoot)monogame.content.builder.task\3.8.1.303\build\MonoGame.Content.Builder.Task.targets" />
 <ItemGroup>
-  <None Include="Content\Content.mgcb" />
+  <None Include="Assets\Content.mgcb">
+    <BuildAction>MonoGameContentReference</BuildAction>
+  </None>
 </ItemGroup>
-<ItemGroup>
-  <None Include="MonoEngine/Assets/Content.mgcb" />
-</ItemGroup>
-    <ItemGroup>
-      <Folder Include="Assets\Fonts\" />
-      <Folder Include="Assets\Sounds\" />
-    </ItemGroup>
     <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
         <Message Text="Restoring dotnet tools" Importance="High" />
         <Exec Command="dotnet tool restore" />

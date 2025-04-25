@@ -36,17 +36,27 @@ public static class AssetRegistry
             return;
         }
 
-        List<string> assetNames = new();
+        var assetNames = new List<string>();
+
         foreach (string line in File.ReadLines(contentPath))
         {
-            if (!line.StartsWith("/build:")) continue;
-            string fullPath = line.Split(":")[1].Trim();
-
-            if (!fullPath.Contains(';')) continue;
-            string mappedName = fullPath.Split(';')[1];
-            string assetPath = Path.ChangeExtension(mappedName, null).Replace("\\", "/"); // Remove extension
-            assetNames.Add(assetPath);
-            Console.WriteLine($"[AssetRegistry] Asset from mgcb: {assetPath}");
+            if (line.StartsWith("/build:"))
+            {
+                string path = line[7..].Trim(); // Skip "/build:"
+                if (path.Contains(';'))
+                {
+                    string alias = path.Split(';')[1].Trim();
+                    string assetName = Path.ChangeExtension(alias, null).Replace("\\", "/");
+                    assetNames.Add(assetName);
+                    Console.WriteLine($"[AssetRegistry] Aliased asset: {assetName}");
+                }
+                else
+                {
+                    string assetName = Path.ChangeExtension(path, null).Replace("\\", "/");
+                    assetNames.Add(assetName);
+                    Console.WriteLine($"[AssetRegistry] Direct asset: {assetName}");
+                }
+            }
         }
 
         SpritePaths = assetNames;
