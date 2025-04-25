@@ -3,7 +3,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 namespace MonoEngine.Framework;
 
-public class Sprite : Component {
+public class Sprite : Component
+{
     public Texture2D Texture { get; private set; } = null!;
     public Vector2 Offset = Vector2.Zero;
     public Color Color = Color.White;
@@ -13,21 +14,23 @@ public class Sprite : Component {
     private int TextureWidth => Texture?.Width ?? 0;
     private int TextureHeight => Texture?.Height ?? 0;
 
-    public void SetTexture(string texturePath, ContentManager content) {
+    public void SetTexture(string texturePath, ContentManager content)
+    {
         Texture2D result = content.Load<Texture2D>(texturePath);
-        if (result == null) {
+        if (result == null)
+        {
             Console.WriteLine("ERROR: Texture not found: " + texturePath);
             return;
         }
-        
+
         Texture = result;
         this.texturePath = texturePath;
     }
-    
+
     public void SetTexture(Texture2D texture) => Texture = texture;
     public string GetTexturePath() => texturePath;
     public string SetTexturePath(string assetName) => texturePath = assetName;
-    
+
     public Vector2 GetSize() => new(TextureWidth, TextureHeight);
     public System.Numerics.Vector2 GetSizeN() => new(TextureWidth, TextureHeight);
     public System.Numerics.Vector2 GetOffsetN() => new(Offset.X, Offset.Y);

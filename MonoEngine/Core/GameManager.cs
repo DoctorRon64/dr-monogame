@@ -9,37 +9,40 @@ using MonoEngine.Entity;
 using MonoEngine.Framework;
 using MonoGame.ImGuiNet;
 
-namespace MonoEngine {
-    public class GameManager : Game {
+namespace MonoEngine
+{
+    public class GameManager : Game
+    {
+        public ImGuiRenderer imGuiRenderer { get; private set; }
         private readonly GraphicsDeviceManager graphics;
+        private readonly Dictionary<string, IntPtr> textureMap = new();
         private SpriteBatch spriteBatch;
         private StateMachine<GameManager> gameStateManager;
 
-        private ImGuiRenderer imGuiRenderer;
-        private readonly Dictionary<string, IntPtr> textureMap = new();
-        
-        public GameManager() {
+        public GameManager()
+        {
             graphics = new(this);
             Content.RootDirectory = "Assets";
             IsMouseVisible = true;
-            
+
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
         }
 
-        protected override void Initialize() {
+        protected override void Initialize()
+        {
             Console.WriteLine("Initialized GameManager");
             gameStateManager = new(this, new MainMenuState());
             gameStateManager.AddState<PlayState>();
             gameStateManager.AddState<EditorState>();
-                
+
             spriteBatch = new(GraphicsDevice);
-            
+
             imGuiRenderer = new(this);
             ImGui.GetIO().Fonts.AddFontDefault();
             imGuiRenderer.RebuildFontAtlas();
-            
+
             var entity = new Framework.Entity("Player");
             entity.AddComponent(new Transform());
             entity.AddComponent(new Sprite());
@@ -49,38 +52,29 @@ namespace MonoEngine {
             base.Initialize();
         }
 
-        protected override void Update(GameTime gameTime) {
+        protected override void Update(GameTime gameTime)
+        {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             imGuiRenderer.BeginLayout(gameTime); // Start ImGui frame
-            
+
             //Under here logic!
             InputManager.Update();
             gameStateManager.Update(gameTime);
-            
+
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime) {
+        protected override void Draw(GameTime gameTime)
+        {
             GraphicsDevice.Clear(Color.Aquamarine);
 
             RenderManager.Instance.Draw(spriteBatch); // Draw your game world
-            
+
             ImGui.Render(); // Ends ImGui frame
             imGuiRenderer.EndLayout(); // Draws ImGui UI
-            
+
             base.Draw(gameTime);
-        }
-        
-        public IntPtr BindTexture(GraphicsDevice device, ContentManager content, string assetPath) {
-            if (textureMap.TryGetValue(assetPath, out IntPtr ptr))
-                return ptr;
-
-            Texture2D texture = content.Load<Texture2D>(assetPath);
-            ptr = imGuiRenderer.BindTexture(texture); // ImGuiRenderer should be your active renderer
-            textureMap[assetPath] = ptr;
-
-            return ptr;
         }
     }
 }

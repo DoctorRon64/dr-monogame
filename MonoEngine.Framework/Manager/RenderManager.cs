@@ -3,18 +3,21 @@ using MonoEngine.Framework;
 
 namespace MonoEngine.Framework;
 
-public class RenderManager : BaseSingleton<RenderManager> {
+public class RenderManager : BaseSingleton<RenderManager>
+{
     private readonly List<Entity> renderableEntities = new();
     public RenderManager() => Console.WriteLine("Initializing RenderSystem");
 
     public void Register(Entity entity) => renderableEntities.Add(entity);
     public void Unregister(Entity entity) => renderableEntities.Remove(entity);
-    public IReadOnlyList<Entity> GetAllEntities() => renderableEntities;    
-    
-    public void Draw(SpriteBatch spriteBatch) {
+    public IReadOnlyList<Entity> GetAllEntities() => renderableEntities;
+
+    public void Draw(SpriteBatch spriteBatch)
+    {
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
-        
-        foreach (Entity entity in renderableEntities) {
+
+        foreach (Entity entity in renderableEntities)
+        {
             Sprite sprite = entity.GetComponent<Sprite>();
             Transform transform = entity.GetComponent<Transform>();
 
