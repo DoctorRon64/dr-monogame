@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ImGuiNET;
 using Microsoft.Xna.Framework.Content;
-using MonoEngine.Entity;
 using MonoEngine.Framework;
 using MonoGame.ImGuiNet;
 
@@ -57,11 +56,12 @@ namespace MonoEngine
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             imGuiRenderer.BeginLayout(gameTime); // Start ImGui frame
-
+            
             //Under here logic!
             InputManager.Update();
             gameStateManager.Update(gameTime);
-
+            
+            imGuiRenderer.EndLayout();
             base.Update(gameTime);
         }
 

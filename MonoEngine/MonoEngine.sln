@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoEngine", "MonoEngine\MonoEngine.csproj", "{5028C6B0-1580-415D-B5E9-05C5F6726D69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoEngine.ImGUI.Net", "..\MonoEngine.ImGUI.Net\MonoEngine.ImGUI.Net.csproj", "{CD422C82-37DB-4F3A-B84E-8C9C7758741F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoEngine.Framework", "..\MonoEngine.Framework\MonoEngine.Framework.csproj", "{148E1025-F9F2-4D5E-8015-EB56D339210E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5028C6B0-1580-415D-B5E9-05C5F6726D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5028C6B0-1580-415D-B5E9-05C5F6726D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5028C6B0-1580-415D-B5E9-05C5F6726D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5028C6B0-1580-415D-B5E9-05C5F6726D69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD422C82-37DB-4F3A-B84E-8C9C7758741F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD422C82-37DB-4F3A-B84E-8C9C7758741F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD422C82-37DB-4F3A-B84E-8C9C7758741F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD422C82-37DB-4F3A-B84E-8C9C7758741F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{148E1025-F9F2-4D5E-8015-EB56D339210E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{148E1025-F9F2-4D5E-8015-EB56D339210E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{148E1025-F9F2-4D5E-8015-EB56D339210E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{148E1025-F9F2-4D5E-8015-EB56D339210E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
