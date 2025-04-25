@@ -22,7 +22,7 @@ namespace MonoEngine
         public GameManager()
         {
             graphics = new(this);
-            Content.RootDirectory = "Assets";
+            Content.RootDirectory = "MonoEngine/Assets";
             IsMouseVisible = true;
 
             graphics.PreferredBackBufferWidth = 1280;

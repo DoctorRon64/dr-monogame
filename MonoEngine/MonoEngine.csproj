@@ -37,6 +37,12 @@
       <ProjectReference Include="..\MonoEngine.Framework\MonoEngine.Framework.csproj" />
       <ProjectReference Include="..\MonoGame.ImGuiNet\MonoEngine.ImGuiNet.csproj" />
     </ItemGroup>
+<ItemGroup>
+  <None Include="Content\Content.mgcb" />
+</ItemGroup>
+<ItemGroup>
+  <None Include="MonoEngine/Assets/Content.mgcb" />
+</ItemGroup>
     <ItemGroup>
       <Folder Include="Assets\Fonts\" />
       <Folder Include="Assets\Sounds\" />

@@ -16,12 +16,16 @@ public class RenderManager : BaseSingleton<RenderManager>
     {
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
+
+
         foreach (Entity entity in renderableEntities)
         {
             Sprite sprite = entity.GetComponent<Sprite>();
             Transform transform = entity.GetComponent<Transform>();
 
             Texture2D texture2D = sprite.Texture;
+            if (texture2D == null) continue;
+
             spriteBatch.Draw(texture2D, transform.Position, null, sprite.Color,
                 transform.Rotation, transform.Origin, transform.Scale, sprite.Effects, 0);
         }
