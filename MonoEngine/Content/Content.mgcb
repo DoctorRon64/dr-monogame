@@ -1,7 +1,8 @@
 
 #----------------------------- Global Properties ----------------------------#
-/outputDir:../bin/DesktopGL/Content
-/intermediateDir:../obj/DesktopGL/Content
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
 /platform:DesktopGL
 /config:
 /profile:Reach
@@ -12,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg
+#begin Sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -22,19 +23,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg;Sprites/man.jpg
+/build:Sprites/bafkreidhnxdkimjixdpkvvexw2g2b5vkscsjqtzi2hsewqzv7skfjw74lu.jpg;man.jpg
 
-#begin sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg
+#begin Sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg
 /importer:TextureImporter
 /processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,0,255
+/processorParam:ColorKeyColor=255,0,255,255
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg;Sprites/yacht.jpeg
+/build:Sprites/luxury-yacht-boat-speed-water-163236-3505688511.jpeg;boat.jpeg
 
 #begin Sprites/mexican.jpg
 /importer:TextureImporter
@@ -46,5 +47,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/mexican.jpg
+/build:Sprites/mexican.jpg;mexican.jpg
 

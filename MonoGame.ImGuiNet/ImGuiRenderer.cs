@@ -19,7 +19,7 @@ public class ImGuiRenderer
 
     private BasicEffect _effect;
     private RasterizerState _rasterizerState;
-    
+
     private byte[] _vertexData;
     private VertexBuffer _vertexBuffer;
     private int _vertexBufferSize;
@@ -190,7 +190,7 @@ public class ImGuiRenderer
     protected virtual void UpdateInput()
     {
         if (!_game.IsActive) return;
-            
+
         var io = ImGui.GetIO();
 
         var mouse = Mouse.GetState();
@@ -381,7 +381,7 @@ public class ImGuiRenderer
             {
                 ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[cmdi];
 
-                if (drawCmd.ElemCount == 0) 
+                if (drawCmd.ElemCount == 0)
                 {
                     continue;
                 }
