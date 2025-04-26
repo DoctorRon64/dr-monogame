@@ -22,13 +22,18 @@ public class EditorState : BaseState<GameManager>
 
     public override void OnEnter()
     {
-        AssetRegistry.Refresh();
+        AssetRegistry.Refresh(Blackboard.Content);
+        
+        InputManager.BindKey(Keys.C, MgcbEditorLauncher.OpenMgcbEditor);
+        InputManager.BindKey(Keys.R, MgcbEditorLauncher.RebuildContent);
         InputManager.BindKey(Keys.B, () => StateMachine.SwitchState<MainMenuState>());
     }
 
     public override void OnExit()
     {
         InputManager.UnbindKey(Keys.B);
+        InputManager.UnbindKey(Keys.C);
+        InputManager.UnbindKey(Keys.R);
     }
 
     public override void OnUpdate(GameTime gameTime)
@@ -156,7 +161,7 @@ public class EditorState : BaseState<GameManager>
     private void ShowAssetPanel(ContentManager content, ImGuiRenderer imguiRenderer)
     {
         // Create the Asset Panel with a 4:3 aspect ratio
-        UtilWindowMaker("🎨 Assets", new Numerics_Vector2(450, 500), new Numerics_Vector2(400, 500), 4, 3);
+        UtilWindowMaker("🎨 Assets", new Numerics_Vector2(200, 300), new Numerics_Vector2(1500, 50), 3, 1);
 
         int thumbnailSize = 64;
         int padding = 16;

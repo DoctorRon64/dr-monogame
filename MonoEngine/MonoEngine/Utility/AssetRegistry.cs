@@ -25,10 +25,10 @@ public static class AssetRegistry
         return imguiHandle;
     }
 
-    public static void Refresh()
+    public static void Refresh(ContentManager content)
     {
         string baseDir = AppContext.BaseDirectory;
-        string contentPath = Path.GetFullPath(Path.Combine(baseDir, "../../../Assets/Content.mgcb"));
+        string contentPath = Path.GetFullPath(Path.Combine(baseDir, "../../../Content/Content.mgcb"));
 
         if (!File.Exists(contentPath))
         {
@@ -36,29 +36,43 @@ public static class AssetRegistry
             return;
         }
 
-        var assetNames = new List<string>();
-
-        foreach (string line in File.ReadLines(contentPath))
+        List<string> assetNames = new();
+        foreach (string line in File.ReadLines(contentPath)) 
         {
-            if (line.StartsWith("/build:"))
+            if (!line.StartsWith("/build:")) continue;
+            string path = line[7..].Trim(); // Skip "/build:"
+            if (path.Contains(';'))
             {
-                string path = line[7..].Trim(); // Skip "/build:"
-                if (path.Contains(';'))
-                {
-                    string alias = path.Split(';')[1].Trim();
-                    string assetName = Path.ChangeExtension(alias, null).Replace("\\", "/");
-                    assetNames.Add(assetName);
-                    Console.WriteLine($"[AssetRegistry] Aliased asset: {assetName}");
-                }
-                else
-                {
-                    string assetName = Path.ChangeExtension(path, null).Replace("\\", "/");
-                    assetNames.Add(assetName);
-                    Console.WriteLine($"[AssetRegistry] Direct asset: {assetName}");
-                }
+                string alias = path.Split(';')[1].Trim();
+                string assetName = Path.ChangeExtension(alias, null).Replace("\\", "/");
+                assetNames.Add(assetName);
+                Console.WriteLine($"[AssetRegistry] Aliased asset: {assetName}");
+            }
+            else
+            {
+                string assetName = Path.ChangeExtension(path, null).Replace("\\", "/");
+                assetNames.Add(assetName);
+                Console.WriteLine($"[AssetRegistry] Direct asset: {assetName}");
             }
         }
 
         SpritePaths = assetNames;
+    
+        Console.WriteLine("[AssetRegistry] Unloading and reloading content...");
+        content.Unload();
+        foreach (string assetPath in SpritePaths)
+        {
+            try
+            {
+                Console.WriteLine($"Loading asset: {assetPath}");
+                content.Load<Texture2D>(assetPath);
+                Console.WriteLine($"Successfully loaded asset: {assetPath}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading asset {assetPath}: {ex.Message}");
+            }
+        }
+        Console.WriteLine("[AssetRegistry] Content reloaded successfully.");
     }
 }
