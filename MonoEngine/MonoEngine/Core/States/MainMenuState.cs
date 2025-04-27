@@ -2,6 +2,7 @@
 using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoEngine.Core.States;
 using MonoEngine.Framework;
 
 namespace MonoEngine;
@@ -9,12 +10,12 @@ namespace MonoEngine;
 public class MainMenuState : BaseState<GameManager> {
     public override void OnEnter() {
         InputManager.BindKey(Keys.Enter, () => StateMachine.SwitchState<PlayState>());
-        InputManager.BindKey(Keys.B, () => StateMachine.SwitchState<EditorState>());
+        InputManager.BindKey(Keys.F2, () => StateMachine.SwitchState<EditorState>());
     }
 
     public override void OnExit() {
         InputManager.UnbindKey(Keys.Enter);
-        InputManager.UnbindKey(Keys.B);
+        InputManager.UnbindKey(Keys.F2);
     }
 
     public override void OnUpdate(GameTime gameTime) {

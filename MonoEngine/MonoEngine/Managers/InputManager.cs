@@ -23,7 +23,8 @@ namespace MonoEngine {
 
             // Safely iterate over a snapshot of keys
             List<Keys> keys = new(keyBindings.Keys);
-            foreach (Keys key in keys.Where(key => currentKeyboardState.IsKeyDown(key) && !prevKeyboardState.IsKeyDown(key))) {
+            foreach (Keys key in keys.Where(key =>
+                         currentKeyboardState.IsKeyDown(key) && !prevKeyboardState.IsKeyDown(key))) {
                 if (!keyBindings.TryGetValue(key, out HashSet<Signal> signals)) continue;
                 foreach (Signal signal in signals.ToArray()) {
                     signal.Invoke();
@@ -36,15 +37,23 @@ namespace MonoEngine {
                 if (!currentGamePadState.IsConnected) continue;
 
                 List<Buttons> buttons = new List<Buttons>(gamepadBindings.Keys);
-                foreach (Buttons button in buttons.Where(button => currentGamePadState.IsButtonDown(button) && !prevGamePadStates[i].IsButtonDown(button))) {
+                foreach (Buttons button in buttons.Where(button =>
+                             currentGamePadState.IsButtonDown(button) && !prevGamePadStates[i].IsButtonDown(button))) {
                     if (!gamepadBindings.TryGetValue(button, out HashSet<Signal> signals)) continue;
                     foreach (Signal signal in signals.ToArray()) {
                         signal.Invoke();
                     }
                 }
+
                 prevGamePadStates[i] = currentGamePadState;
             }
+
             prevKeyboardState = currentKeyboardState;
+        }
+
+        public static void UnbuindAll(bool keyboard = true, bool gamepad = true) {
+            if (keyboard) keyBindings.Clear();
+            else if (gamepad) gamepadBindings.Clear();
         }
 
         public static void BindKey(Keys key, SignalBase.SignalDelegate callback) {
@@ -56,12 +65,12 @@ namespace MonoEngine {
             if (!keyBindings.ContainsKey(key)) return;
             keyBindings.Remove(key);
         }
-    
+
         public static void BindGamepadButton(Buttons button, SignalBase.SignalDelegate callback) {
             if (!gamepadBindings.ContainsKey(button)) gamepadBindings[button] = new();
             gamepadBindings[button].Add(new(callback));
         }
-    
+
         public static void UnbindGamepadButton(Buttons button) {
             if (!gamepadBindings.ContainsKey(button)) return;
             gamepadBindings.Remove(button);

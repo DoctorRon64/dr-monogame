@@ -1,11 +1,10 @@
 ﻿using System;
+
 namespace MonoEngine;
 
-public static class Program
-{
+public static class Program {
     [STAThread]
-    public static void Main(string[] args)
-    {
+    public static void Main(string[] args) {
         Console.WriteLine("Initialize Game!");
         using var game = new GameManager();
         game.Run();
