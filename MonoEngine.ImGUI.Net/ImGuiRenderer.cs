@@ -19,7 +19,7 @@ public class ImGuiRenderer
 
     private BasicEffect _effect;
     private RasterizerState _rasterizerState;
-    
+
     private byte[] _vertexData;
     private VertexBuffer _vertexBuffer;
     private int _vertexBufferSize;
@@ -59,6 +59,24 @@ public class ImGuiRenderer
             ScissorTestEnable = true,
             SlopeScaleDepthBias = 0
         };
+
+        string fontPath = Path.Combine(AppContext.BaseDirectory, "../../MonoEngine/Content/Fonts/MaterialSymbolsRounded_36pt-Regular.ttf");
+        Console.WriteLine("found path at " + fontPath);
+
+        unsafe
+        {
+            ImGuiIOPtr io = ImGui.GetIO();
+            io.Fonts.AddFontFromFileTTF(fontPath, 16.0f);
+
+            // 2. Load an icon font (merge it into the default font)
+            ImFontConfigPtr config = ImGuiNative.ImFontConfig_ImFontConfig();
+            config.MergeMode = true; // <- Important: merge icons into existing font
+            config.GlyphMinAdvanceX = 13.0f; // adjust if icons are squashed
+            ushort iconMin = 0xf000; // Example for FontAwesome icons
+            ushort iconMax = 0xf3ff;
+
+            //io.Fonts.AddFontFromFileTTF("Content/Fonts/fa-solid-900.ttf", 16.0f, config, io.Fonts.GetGlyphRangesDefault());
+        }
 
         SetupInput();
     }
@@ -190,7 +208,7 @@ public class ImGuiRenderer
     protected virtual void UpdateInput()
     {
         if (!_game.IsActive) return;
-            
+
         var io = ImGui.GetIO();
 
         var mouse = Mouse.GetState();
@@ -381,7 +399,7 @@ public class ImGuiRenderer
             {
                 ImDrawCmdPtr drawCmd = cmdList.CmdBuffer[cmdi];
 
-                if (drawCmd.ElemCount == 0) 
+                if (drawCmd.ElemCount == 0)
                 {
                     continue;
                 }

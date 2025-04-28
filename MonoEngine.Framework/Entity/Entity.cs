@@ -35,9 +35,11 @@ public class Entity
     }
 
     public void RemoveComponent<T>() where T : Component => components.Remove(typeof(T));
+    public void RemoveComponent<T>(Type component) where T : Component => components.Remove(typeof(T));
     public void GetComponent<T>(out T component) where T : Component => component = (T)components[typeof(T)];
     public T GetComponent<T>() where T : Component => (T)components[typeof(T)];
     public bool HasComponent<T>() where T : Component => components.ContainsKey(typeof(T));
+    public bool HasComponent<T>(Type component) where T : Component => components.ContainsKey(component);
     public IEnumerable<Component> GetAllComponents() => components.Values;
 
     public bool TryGetComponent<T>(out T component) where T : Component
