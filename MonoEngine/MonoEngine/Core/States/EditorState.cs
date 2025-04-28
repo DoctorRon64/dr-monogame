@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Numerics;
 using ImGuiNET;
+using Ktisis.ImGuizmo;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
@@ -11,16 +13,35 @@ using Numerics_Vector2 = System.Numerics.Vector2;
 
 namespace MonoEngine.Core.States;
 
-public class EditorState : BaseState<GameManager> {
+public class EditorState : BaseState<GameManager>
+{
     private Framework.Entity selectedEntity;
     private string selectedAsset = string.Empty;
     private bool uniformScale = true;
+    private Camera camera;
 
-    public override void OnEnter() {
+    public override void OnEnter()
+    {
+        camera = new Camera(); // Initialize the camera
+        camera.Transform.Position = new(100, 100); // Set initial camera position
+        camera.Transform.Rotation = 0f;
+        camera.Transform.Scale = Microsoft.Xna.Framework.Vector2.One;
+
+        selectedEntity = new Entity("Sample Entity");
+        var entityTransform = new Transform()
+        {
+            Position = new(50, 50),
+            Rotation = 0f,
+            Scale = Microsoft.Xna.Framework.Vector2.One
+        };
+        selectedEntity.AddComponent(entityTransform);
+        SceneManager.AddEntity(selectedEntity);
+
         AssetRegistry.RefreshPaths();
         AssetRegistry.ReloadContent(Blackboard.Content, Blackboard.ImGuiRenderer);
 
-        InputManager.BindKey(Keys.F1, () => {
+        InputManager.BindKey(Keys.F1, () =>
+        {
             MgcbEditorLauncher.OpenMgcbEditor();
             AssetRegistry.RefreshPaths(); // Repopulate asset list
             AssetRegistry.ReloadContent(Blackboard.Content, Blackboard.ImGuiRenderer);
@@ -29,18 +50,25 @@ public class EditorState : BaseState<GameManager> {
         InputManager.BindKey(Keys.F2, () => StateMachine.SwitchState<MainMenuState>());
     }
 
-    public override void OnExit() {
+    public override void OnExit()
+    {
         InputManager.UnbuindAll();
     }
 
-    public override void OnUpdate(GameTime gameTime) {
+    public override void OnUpdate(GameTime gameTime)
+    {
+        camera.Transform.Position += new Microsoft.Xna.Framework.Vector2(1, 0); // Example of moving the camera
+        var entityTransform = selectedEntity.GetComponent<Transform>();
+        entityTransform.Position += new Microsoft.Xna.Framework.Vector2(0, 1);
+
         SceneHierachy();
         ShowInspector(selectedEntity);
         ShowAssetPanel(Blackboard.Content, Blackboard.ImGuiRenderer); // <- new!
     }
 
     private static void UtilWindowMaker(string title, Numerics_Vector2 defaultSize, Numerics_Vector2? defaultPos = null,
-        float? aspectX = null, float? aspectY = null) {
+        float? aspectX = null, float? aspectY = null)
+    {
         // Set default window size on first use
         ImGui.SetNextWindowSize(defaultSize, ImGuiCond.FirstUseEver);
 
@@ -57,21 +85,25 @@ public class EditorState : BaseState<GameManager> {
         Numerics_Vector2 currentSize = ImGui.GetWindowSize();
         float enforcedWidth = currentSize.Y * aspect;
 
-        if (Math.Abs(currentSize.X - enforcedWidth) > 1f) {
+        if (Math.Abs(currentSize.X - enforcedWidth) > 1f)
+        {
             // Adjust window size based on aspect ratio
             ImGui.SetWindowSize(new(enforcedWidth, currentSize.Y));
         }
     }
 
-    private void SceneHierachy() {
+    private void SceneHierachy()
+    {
         // Set the default size and position based on desired aspect ratio
         UtilWindowMaker("🧱 Scene Hierarchy", new Numerics_Vector2(300, 200), new Numerics_Vector2(50, 50), 2, 1);
         ImGui.TextDisabled("Entities in scene:");
         ImGui.Separator();
 
-        foreach (Framework.Entity entity in SceneManager.Entities) {
+        foreach (Framework.Entity entity in SceneManager.Entities)
+        {
             bool isSelected = selectedEntity == entity;
-            if (ImGui.Selectable($"{entity.GetEntityName()}##{entity.Id}", isSelected)) {
+            if (ImGui.Selectable($"{entity.GetEntityName()}##{entity.Id}", isSelected))
+            {
                 selectedEntity = entity;
             }
         }
@@ -79,11 +111,13 @@ public class EditorState : BaseState<GameManager> {
         ImGui.End();
     }
 
-    private void ShowInspector(Framework.Entity entity) {
+    private void ShowInspector(Framework.Entity entity)
+    {
         // Create the Inspector Window with a 3:4 aspect ratio
         UtilWindowMaker("🔍 Inspector", new Numerics_Vector2(350, 400), new Numerics_Vector2(400, 100), 3, 4);
 
-        if (entity == null) {
+        if (entity == null)
+        {
             ImGui.TextDisabled("No entity selected.");
             ImGui.End();
             return;
@@ -96,7 +130,8 @@ public class EditorState : BaseState<GameManager> {
             entity.Name = name;
 
         // Handling Transform component
-        if (entity.TryGetComponent(out Transform transform)) {
+        if (entity.TryGetComponent(out Transform transform))
+        {
             ImGui.SeparatorText("🧭 Transform");
             ImGui.Checkbox("Uniform Scale", ref uniformScale);
 
@@ -107,13 +142,16 @@ public class EditorState : BaseState<GameManager> {
 
             ImGui.DragFloat2("Position", ref position, 1.0f, -10000f, 10000f);
 
-            if (uniformScale) {
+            if (uniformScale)
+            {
                 float uniform = scale.X;
-                if (ImGui.DragFloat("Scale", ref uniform, 0.01f, 0.01f, 10.0f)) {
+                if (ImGui.DragFloat("Scale", ref uniform, 0.01f, 0.01f, 10.0f))
+                {
                     scale.X = scale.Y = uniform;
                 }
             }
-            else {
+            else
+            {
                 ImGui.DragFloat2("Scale XY", ref scale, 0.01f, 0.01f, 10.0f);
             }
 
@@ -127,19 +165,25 @@ public class EditorState : BaseState<GameManager> {
         }
 
         // Handling Sprite component
-        if (entity.TryGetComponent(out Sprite sprite)) {
+        if (entity.TryGetComponent(out Sprite sprite))
+        {
             ImGui.SeparatorText("🖼 Sprite");
 
             string currentPath = sprite.GetTexturePath();
-            if (ImGui.BeginCombo("Texture", string.IsNullOrEmpty(currentPath) ? "<None>" : currentPath)) {
-                foreach (string path in AssetRegistry.SpritePaths) {
+            if (ImGui.BeginCombo("Texture", string.IsNullOrEmpty(currentPath) ? "<None>" : currentPath))
+            {
+                foreach (string path in AssetRegistry.SpritePaths)
+                {
                     bool isSelected = path == currentPath;
-                    if (ImGui.Selectable(path, isSelected)) {
+                    if (ImGui.Selectable(path, isSelected))
+                    {
                         string assetName = Path.ChangeExtension(path, null);
-                        try {
+                        try
+                        {
                             sprite.SetTexture(assetName, Blackboard.Content);
                         }
-                        catch (Exception ex) {
+                        catch (Exception ex)
+                        {
                             Console.WriteLine($"[Inspector] Failed to load texture: {ex.Message}");
                         }
                     }
@@ -151,15 +195,17 @@ public class EditorState : BaseState<GameManager> {
             }
 
             Numerics_Vector2 offset = sprite.GetOffsetN();
-            if (ImGui.DragFloat2("Offset", ref offset, 1f, -1000, 1000)) {
-                sprite.Offset = new Vector2(offset.X, offset.Y);
+            if (ImGui.DragFloat2("Offset", ref offset, 1f, -1000, 1000))
+            {
+                sprite.Offset = new(offset.X, offset.Y);
             }
         }
 
         ImGui.End();
     }
 
-    private void ShowAssetPanel(ContentManager content, ImGuiRenderer imguiRenderer) {
+    private void ShowAssetPanel(ContentManager content, ImGuiRenderer imguiRenderer)
+    {
         // Create the Asset Panel with a 4:3 aspect ratio
         UtilWindowMaker("🎨 Assets", new Numerics_Vector2(200, 300), new Numerics_Vector2(1500, 50), 3, 1);
 
@@ -170,14 +216,17 @@ public class EditorState : BaseState<GameManager> {
         int columnCount = Math.Max(1, (int)(panelWidth / cellSize));
         int index = 0;
 
-        foreach (string assetPath in AssetRegistry.SpritePaths) {
+        foreach (string assetPath in AssetRegistry.SpritePaths)
+        {
             IntPtr texturePtr = AssetRegistry.GetThumbnail(assetPath, Blackboard);
 
             ImGui.BeginGroup();
 
-            if (texturePtr != IntPtr.Zero) {
+            if (texturePtr != IntPtr.Zero)
+            {
                 ImGui.Image(texturePtr, new Numerics_Vector2(thumbnailSize, thumbnailSize));
-                if (ImGui.IsItemHovered()) {
+                if (ImGui.IsItemHovered())
+                {
                     ImGui.BeginTooltip();
                     ImGui.Image(texturePtr, new Numerics_Vector2(thumbnailSize * 2, thumbnailSize * 2));
                     ImGui.Text(assetPath);
