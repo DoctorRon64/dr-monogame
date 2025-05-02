@@ -5,19 +5,15 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoEngine.Framework.components;
 
-namespace MonoEngine.Framework.Manager
-{
-    public class SpatialPartitionManager : BaseSingleton<SpatialPartitionManager>
-    {
-        public static Dictionary<Point, List<Entity>> Cells = new();
-        private static int CellSize = 128;
+namespace MonoEngine.Framework.Manager {
+    public class SpatialPartitionManager : BaseSingleton<SpatialPartitionManager> {
+        private static readonly Dictionary<Point, List<Entity>> cells = new();
+        private const int cellSize = 128;
 
-        public static void Rebuild()
-        {
-            Cells.Clear();
+        public static void Rebuild() {
+            cells.Clear();
 
-            foreach (var entity in SceneManager.Instance.Entities)
-            {
+            foreach (Entity entity in SceneManager.Instance.Entities) {
                 Transform? transform = entity.GetComponent<Transform>();
                 Collider? collider = entity.GetComponent<Collider>();
 
@@ -28,42 +24,33 @@ namespace MonoEngine.Framework.Manager
                     (int)collider.Bounds.Height
                 );
 
-                Point min = new(worldBounds.Left / CellSize, worldBounds.Top / CellSize);
-                Point max = new(worldBounds.Right / CellSize, worldBounds.Bottom / CellSize);
+                Point min = new(worldBounds.Left / cellSize, worldBounds.Top / cellSize);
+                Point max = new(worldBounds.Right / cellSize, worldBounds.Bottom / cellSize);
 
-                for (int x = min.X; x <= max.X; x++)
-                {
-                    for (int y = min.Y; y <= max.Y; y++)
-                    {
-                        var cell = new Point(x, y);
-                        if (!Cells.ContainsKey(cell)) Cells[cell] = new();
-                        Cells[cell].Add(entity);
+                for (int x = min.X; x <= max.X; x++) {
+                    for (int y = min.Y; y <= max.Y; y++) {
+                        Point cell = new Point(x, y);
+                        if (!cells.ContainsKey(cell)) cells[cell] = new();
+                        cells[cell].Add(entity);
                     }
                 }
             }
         }
 
-        public static IEnumerable<Entity> Query(Rectangle area)
-        {
+        public static IEnumerable<Entity> Query(Rectangle area) {
             HashSet<Entity> result = new();
-            Point min = new(area.Left / CellSize, area.Top / CellSize);
-            Point max = new(area.Right / CellSize, area.Bottom / CellSize);
+            Point min = new(area.Left / cellSize, area.Top / cellSize);
+            Point max = new(area.Right / cellSize, area.Bottom / cellSize);
 
-            for (int x = min.X; x <= max.X; x++)
-            {
-                for (int y = min.Y; y <= max.Y; y++)
-                {
-                    var cell = new Point(x, y);
-                    if (Cells.TryGetValue(cell, out var list))
-                    {
-                        foreach (var e in list) result.Add(e);
-                    }
+            for (int x = min.X; x <= max.X; x++) {
+                for (int y = min.Y; y <= max.Y; y++) {
+                    Point cell = new Point(x, y);
+                    if (!cells.TryGetValue(cell, out var list)) continue;
+                    foreach (Entity e in list) result.Add(e);
                 }
             }
 
             return result;
         }
     }
-
 }
-

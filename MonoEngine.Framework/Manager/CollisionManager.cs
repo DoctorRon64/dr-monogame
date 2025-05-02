@@ -6,32 +6,27 @@ using Microsoft.Xna.Framework;
 using MonoEngine.Framework.components;
 using MonoEngine.Framework.Components;
 
-namespace MonoEngine.Framework.Manager
-{
-    public class CollisionSystem : BaseSingleton<CollisionSystem>
-    {
-        public void Update(GameTime gameTime)
-        {
-            foreach (var entity in SceneManager.Instance.Entities)
-            {
+namespace MonoEngine.Framework.Manager {
+    public class CollisionSystem : BaseSingleton<CollisionSystem> {
+        public void Update(GameTime gameTime) {
+            foreach (Entity entity in SceneManager.Instance.Entities) {
                 Transform? transform = entity.GetComponent<Transform>();
                 Collider collider = entity.GetComponent<Collider>();
 
                 if (collider.IsStatic) continue;
 
                 Rectangle bounds = new(
-                   (int)(transform.Position.X + collider.Bounds.X),
-                   (int)(transform.Position.Y + collider.Bounds.Y),
-                   (int)collider.Bounds.Width,
-                   (int)collider.Bounds.Height
-               );
+                    (int)(transform.Position.X + collider.Bounds.X),
+                    (int)(transform.Position.Y + collider.Bounds.Y),
+                    (int)collider.Bounds.Width,
+                    (int)collider.Bounds.Height
+                );
 
-                foreach (var other in SpatialPartitionManager.Query(bounds))
-                {
+                foreach (Entity other in SpatialPartitionManager.Query(bounds)) {
                     if (other == entity) continue;
 
-                    var othertransform = other.GetComponent<Transform>();
-                    var otherCol = other.GetComponent<Collider>();
+                    Transform othertransform = other.GetComponent<Transform>();
+                    Collider otherCol = other.GetComponent<Collider>();
 
                     Rectangle otherBounds = new(
                         (int)(othertransform.Position.X + otherCol.Bounds.X),
@@ -40,31 +35,27 @@ namespace MonoEngine.Framework.Manager
                         (int)otherCol.Bounds.Height
                     );
 
-                    if (bounds.Intersects(otherBounds))
-                    {
-                        Vector2 mtv = GetMTV(bounds, otherBounds);
-                        transform.Position -= mtv;
+                    if (!bounds.Intersects(otherBounds)) continue;
+                    Vector2 mtv = GetMinimumTranslationVector(bounds, otherBounds);
+                    transform.Position -= mtv;
 
-                        var vel = entity.GetComponent<Velocity>();
-                        if (vel != null) vel.Value = Vector2.Zero;
-                    }
+                    Velocity? vel = entity.GetComponent<Velocity>();
+                    if (true) vel.Value = Vector2.Zero;
                 }
-
             }
         }
 
-        private Vector2 GetMTV(Rectangle a, Rectangle b)
-        {
-            float dx = (a.Center.X - b.Center.X);
-            float px = (a.Width / 2 + b.Width / 2) - Math.Abs(dx);
+        private static Vector2 GetMinimumTranslationVector(Rectangle a, Rectangle b) {
+            float deltaX = a.Center.X - b.Center.X;
+            float overlapX = (a.Width / 2f + b.Width / 2f) - Math.Abs(deltaX);
 
-            float dy = (a.Center.Y - b.Center.Y);
-            float py = (a.Height / 2 + b.Height / 2) - Math.Abs(dy);
+            float deltaY = a.Center.Y - b.Center.Y;
+            float overlapY = (a.Height / 2f + b.Height / 2f) - Math.Abs(deltaY);
 
-            if (px < py)
-                return new Vector2(dx < 0 ? -px : px, 0);
-            else
-                return new Vector2(0, dy < 0 ? -py : py);
+            if (overlapX <= 0 || overlapY <= 0) return Vector2.Zero;
+            return overlapX < overlapY
+                ? new(deltaX < 0 ? -overlapX : overlapX, 0)
+                : new(0, deltaY < 0 ? -overlapY : overlapY);
         }
     }
 }

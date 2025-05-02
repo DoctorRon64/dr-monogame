@@ -12,19 +12,16 @@ using MonoEngine.Framework.components;
 using MonoEngine.Framework.Manager;
 using MonoEngine.Framework.Components;
 
-namespace MonoEngine
-{
-    public class GameManager : Game
-    {
+namespace MonoEngine {
+    public class GameManager : Game {
         public ImGuiRenderer ImGuiRenderer { get; private set; }
         private readonly GraphicsDeviceManager graphics;
         private readonly Dictionary<string, IntPtr> textureMap = new();
         private SpriteBatch spriteBatch;
         private StateMachine<GameManager> gameStateManager;
-        private Scene GameScene;
+        private Scene gameScene;
 
-        public GameManager()
-        {
+        public GameManager() {
             graphics = new(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -34,8 +31,7 @@ namespace MonoEngine
             graphics.ApplyChanges();
         }
 
-        protected override void Initialize()
-        {
+        protected override void Initialize() {
             Console.WriteLine("Initialized GameManager");
             gameStateManager = new(this, new MainMenuState());
             gameStateManager.AddState<PlayState>();
@@ -47,9 +43,10 @@ namespace MonoEngine
             ImGui.GetIO().Fonts.AddFontDefault();
             ImGuiRenderer.RebuildFontAtlas();
 
-            SceneManager.Instance.LoadScene(GameScene);
+            gameScene = new();
+            SceneManager.Instance.LoadScene(gameScene);
 
-            var entity = new Framework.Entity("Player");
+            Framework.Entity entity = new Framework.Entity("Player");
             entity.AddComponent(new RigidBody());
             entity.AddComponent(new Velocity());
             entity.AddComponent(new Transform());
@@ -60,18 +57,17 @@ namespace MonoEngine
             base.Initialize();
         }
 
-        protected override void Update(GameTime gameTime)
-        {
+        protected override void Update(GameTime gameTime) {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             ImGuiRenderer.BeginLayout(gameTime); // Start ImGui frame
 
             //Under here logic!
             InputManager.Update();
-            MovementManager.Instance.Update(gameTime);           // Apply velocities to transforms
-            SpatialPartitionManager.Rebuild();  // Clear & rebuild spatial grid
-            CollisionSystem.Instance.Update(gameTime);          // Detect and resolve collisions
-            PhysicsSystem.Instance.Update(gameTime);            // Apply forces, gravity, impulses
+            MovementManager.Instance.Update(gameTime); // Apply velocities to transforms
+            SpatialPartitionManager.Rebuild(); // Clear & rebuild spatial grid
+            CollisionSystem.Instance.Update(gameTime); // Detect and resolve collisions
+            PhysicsSystem.Instance.Update(gameTime); // Apply forces, gravity, impulses
 
             //TODO
             //ANIMATION
@@ -84,9 +80,9 @@ namespace MonoEngine
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
-        {
-            GraphicsDevice.Clear(Color.Aquamarine);
+        protected override void Draw(GameTime gameTime) {
+            Color myColor = new (0xFFFF5733);
+            GraphicsDevice.Clear(myColor);
 
             RenderManager.Instance.Draw(spriteBatch); // Draw your game world
 

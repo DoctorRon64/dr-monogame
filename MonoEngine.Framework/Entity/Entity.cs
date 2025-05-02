@@ -3,16 +3,14 @@ using MonoEngine.Framework.Manager;
 
 namespace MonoEngine.Framework;
 
-public class Entity
-{
+public class Entity {
     private static int nextId = 0;
     public int Id { get; private set; }
     public string Name;
 
     private readonly Dictionary<Type, Component> components = new();
 
-    public Entity(string name = "new Entity")
-    {
+    public Entity(string name = "new Entity") {
         Id = nextId++;
         this.Name = name;
         Console.WriteLine($"Object {Name} created with Id: {Id}");
@@ -25,18 +23,15 @@ public class Entity
     /// </summary>
     /// <param name="component"></param>
     /// <typeparam name="T"></typeparam>
-    public void AddComponent<T>(T component) where T : Component
-    {
+    public void AddComponent<T>(T component) where T : Component {
         components[typeof(T)] = component;
 
-        if (component is Sprite && !RenderManager.Instance.GetAllEntities().Contains(this))
-        {
+        if (component is Sprite && !RenderManager.Instance.GetAllEntities().Contains(this)) {
             RenderManager.Instance.Register(this);
         }
     }
 
-    public T AddComponent<T>() where T : Component, new()
-    {
+    public T AddComponent<T>() where T : Component, new() {
         components[typeof(T)] = new T();
         return (T)components[typeof(T)];
     }
@@ -49,10 +44,8 @@ public class Entity
     public bool HasComponent<T>(Type component) where T : Component => components.ContainsKey(component);
     public IEnumerable<Component> GetAllComponents() => components.Values;
 
-    public bool TryGetComponent<T>(out T component) where T : Component
-    {
-        foreach (Component storedComponent in components.Values)
-        {
+    public bool TryGetComponent<T>(out T component) where T : Component {
+        foreach (Component storedComponent in components.Values) {
             if (storedComponent is not T matchedComponent) continue;
             component = matchedComponent;
             return true;
@@ -62,11 +55,9 @@ public class Entity
         return false;
     }
 
-    public List<T> GetComponents<T>() where T : Component
-    {
+    public List<T> GetComponents<T>() where T : Component {
         List<T> result = new();
-        foreach (Component component in components.Values)
-        {
+        foreach (Component component in components.Values) {
             if (component is not T match) continue;
             result.Add(match);
         }

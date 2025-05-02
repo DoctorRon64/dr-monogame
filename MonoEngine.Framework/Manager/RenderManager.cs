@@ -4,8 +4,7 @@ using MonoEngine.Framework.components;
 
 namespace MonoEngine.Framework.Manager;
 
-public class RenderManager : BaseSingleton<RenderManager>
-{
+public class RenderManager : BaseSingleton<RenderManager> {
     private readonly List<Entity> renderableEntities = new();
     public RenderManager() => Console.WriteLine("Initializing RenderSystem");
 
@@ -13,14 +12,10 @@ public class RenderManager : BaseSingleton<RenderManager>
     public void Unregister(Entity entity) => renderableEntities.Remove(entity);
     public IReadOnlyList<Entity> GetAllEntities() => renderableEntities;
 
-    public void Draw(SpriteBatch spriteBatch)
-    {
+    public void Draw(SpriteBatch spriteBatch) {
         spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
 
-
-
-        foreach (Entity entity in renderableEntities)
-        {
+        foreach (Entity entity in renderableEntities) {
             Sprite sprite = entity.GetComponent<Sprite>();
             Transform transform = entity.GetComponent<Transform>();
 

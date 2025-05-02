@@ -2,8 +2,8 @@ using System.Drawing;
 using Microsoft.Xna.Framework;
 
 namespace MonoEngine.Framework.components;
-public class Collider : Component
-{
+
+public class Collider : Component {
     public Vector2 Position;
     public Vector2 Size;
     public bool IsStatic = false;

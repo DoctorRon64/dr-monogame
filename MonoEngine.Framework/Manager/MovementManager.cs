@@ -6,16 +6,12 @@ using Microsoft.Xna.Framework;
 using MonoEngine.Framework.components;
 using MonoEngine.Framework.Components;
 
-namespace MonoEngine.Framework.Manager
-{
-    public class MovementManager : BaseSingleton<MovementManager>
-    {
-        public void Update(GameTime gameTime)
-        {
+namespace MonoEngine.Framework.Manager {
+    public class MovementManager : BaseSingleton<MovementManager> {
+        public void Update(GameTime gameTime) {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            foreach (var entity in SceneManager.Instance.Entities)
-            {
+            foreach (Entity entity in SceneManager.Instance.Entities) {
                 Transform? transform = entity.GetComponent<Transform>();
                 Velocity velocity = entity.GetComponent<Velocity>();
 

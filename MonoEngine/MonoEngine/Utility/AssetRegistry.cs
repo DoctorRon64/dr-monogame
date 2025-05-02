@@ -8,26 +8,22 @@ using MonoGame.ImGuiNet;
 
 namespace MonoEngine.Utility;
 
-public static class AssetRegistry
-{
+public static class AssetRegistry {
     public static List<string> SpritePaths { get; private set; } = [];
     private static readonly Dictionary<string, IntPtr> textureHandles = new();
 
-    public static void RefreshPaths()
-    {
+    public static void RefreshPaths() {
         // Only refresh the list of asset paths, no loading yet
         string baseDir = AppContext.BaseDirectory;
         string contentPath = Path.GetFullPath(Path.Combine(baseDir, "../../../Content/Content.mgcb"));
 
-        if (!File.Exists(contentPath))
-        {
+        if (!File.Exists(contentPath)) {
             Console.WriteLine("[AssetRegistry] Content.mgcb not found at: " + contentPath);
             return;
         }
 
         List<string> assetNames = new();
-        foreach (string line in File.ReadLines(contentPath))
-        {
+        foreach (string line in File.ReadLines(contentPath)) {
             if (!line.StartsWith("/build:")) continue;
             string path = line[7..].Trim();
             string assetName = path.Contains(';')
@@ -41,24 +37,20 @@ public static class AssetRegistry
         SpritePaths = assetNames;
     }
 
-    public static void ReloadContent(ContentManager content, ImGuiRenderer imguiRenderer)
-    {
+    public static void ReloadContent(ContentManager content, ImGuiRenderer imguiRenderer) {
         Console.WriteLine("[AssetRegistry] Reloading content...");
 
         textureHandles.Clear(); // Clear cached textures
 
-        foreach (string assetPath in SpritePaths)
-        {
-            try
-            {
+        foreach (string assetPath in SpritePaths) {
+            try {
                 Texture2D texture = content.Load<Texture2D>(assetPath);
                 IntPtr imguiHandle = imguiRenderer.BindTexture(texture);
                 textureHandles[assetPath] = imguiHandle;
 
                 Console.WriteLine($"[AssetRegistry] Loaded {assetPath}");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 Console.WriteLine($"[AssetRegistry] Failed to load {assetPath}: {ex.Message}");
             }
         }
@@ -67,8 +59,7 @@ public static class AssetRegistry
     private static IntPtr missingTextureHandle = IntPtr.Zero;
     private static bool missingTextureLoaded = false;
 
-    public static IntPtr GetThumbnail(string assetPath, GameManager gameManager)
-    {
+    public static IntPtr GetThumbnail(string assetPath, GameManager gameManager) {
         if (textureHandles.TryGetValue(assetPath, out var handle))
             return handle;
 
@@ -81,8 +72,7 @@ public static class AssetRegistry
         return missingTextureHandle;
     }
 
-    private static Texture2D CreateMissingTexture(GameManager gameManager)
-    {
+    private static Texture2D CreateMissingTexture(GameManager gameManager) {
         Texture2D tex = new Texture2D(gameManager.GraphicsDevice, 2, 2);
         tex.SetData(new[] {
             Color.Magenta, Color.Black,
