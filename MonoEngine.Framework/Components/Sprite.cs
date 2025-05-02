@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Color = Microsoft.Xna.Framework.Color;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
-namespace MonoEngine.Framework;
+namespace MonoEngine.Framework.components;
 
 public class Sprite : Component
 {

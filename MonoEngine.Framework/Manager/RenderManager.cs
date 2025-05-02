@@ -1,7 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 using MonoEngine.Framework;
+using MonoEngine.Framework.components;
 
-namespace MonoEngine.Framework;
+namespace MonoEngine.Framework.Manager;
 
 public class RenderManager : BaseSingleton<RenderManager>
 {

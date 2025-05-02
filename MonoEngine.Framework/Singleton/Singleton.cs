@@ -2,7 +2,8 @@
 
 namespace MonoEngine.Framework;
 
-public class Singleton<T> where T : class, new() {
-    private static T? instance;
-    public static T Instance => instance ??= new T();
+public sealed class Singleton<T> where T : class, new()
+{
+    private static readonly Lazy<T> lazy = new(() => new T());
+    public static T Instance => lazy.Value;
 }

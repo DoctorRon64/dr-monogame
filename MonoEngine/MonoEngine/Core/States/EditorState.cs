@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Numerics;
 using ImGuiNET;
-using Ktisis.ImGuizmo;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using MonoEngine.Framework;
+using MonoEngine.Framework.components;
 using MonoEngine.Utility;
 using MonoGame.ImGuiNet;
 using Numerics_Vector2 = System.Numerics.Vector2;
@@ -18,24 +17,9 @@ public class EditorState : BaseState<GameManager>
     private Framework.Entity selectedEntity;
     private string selectedAsset = string.Empty;
     private bool uniformScale = true;
-    private Camera camera;
 
     public override void OnEnter()
     {
-        camera = new Camera(); // Initialize the camera
-        camera.Transform.Position = new(100, 100); // Set initial camera position
-        camera.Transform.Rotation = 0f;
-        camera.Transform.Scale = Microsoft.Xna.Framework.Vector2.One;
-
-        selectedEntity = new Entity("Sample Entity");
-        var entityTransform = new Transform()
-        {
-            Position = new(50, 50),
-            Rotation = 0f,
-            Scale = Microsoft.Xna.Framework.Vector2.One
-        };
-        selectedEntity.AddComponent(entityTransform);
-        SceneManager.AddEntity(selectedEntity);
 
         AssetRegistry.RefreshPaths();
         AssetRegistry.ReloadContent(Blackboard.Content, Blackboard.ImGuiRenderer);
@@ -57,10 +41,6 @@ public class EditorState : BaseState<GameManager>
 
     public override void OnUpdate(GameTime gameTime)
     {
-        camera.Transform.Position += new Microsoft.Xna.Framework.Vector2(1, 0); // Example of moving the camera
-        var entityTransform = selectedEntity.GetComponent<Transform>();
-        entityTransform.Position += new Microsoft.Xna.Framework.Vector2(0, 1);
-
         SceneHierachy();
         ShowInspector(selectedEntity);
         ShowAssetPanel(Blackboard.Content, Blackboard.ImGuiRenderer); // <- new!
@@ -99,10 +79,10 @@ public class EditorState : BaseState<GameManager>
         ImGui.TextDisabled("Entities in scene:");
         ImGui.Separator();
 
-        foreach (Framework.Entity entity in SceneManager.Entities)
+        foreach (Framework.Entity entity in SceneManager.Instance.Entities)
         {
             bool isSelected = selectedEntity == entity;
-            if (ImGui.Selectable($"{entity.GetEntityName()}##{entity.Id}", isSelected))
+            if (ImGui.Selectable($"{entity.Name}##{entity.Id}", isSelected))
             {
                 selectedEntity = entity;
             }
@@ -110,7 +90,6 @@ public class EditorState : BaseState<GameManager>
 
         ImGui.End();
     }
-
     private void ShowInspector(Framework.Entity entity)
     {
         // Create the Inspector Window with a 3:4 aspect ratio
@@ -203,12 +182,10 @@ public class EditorState : BaseState<GameManager>
 
         ImGui.End();
     }
-
     private void ShowAssetPanel(ContentManager content, ImGuiRenderer imguiRenderer)
     {
         // Create the Asset Panel with a 4:3 aspect ratio
         UtilWindowMaker("🎨 Assets", new Numerics_Vector2(200, 300), new Numerics_Vector2(1500, 50), 3, 1);
-
         const int thumbnailSize = 64;
         const int padding = 16;
         const float cellSize = thumbnailSize + padding;

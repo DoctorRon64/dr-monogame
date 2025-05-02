@@ -1,4 +1,7 @@
-﻿namespace MonoEngine.Framework;
+﻿using MonoEngine.Framework.components;
+using MonoEngine.Framework.Manager;
+
+namespace MonoEngine.Framework;
 
 public class Entity
 {
@@ -16,8 +19,6 @@ public class Entity
     }
 
     public int GetEntityId() => Id;
-    public string GetEntityName() => Name;
-    public void SetEntityName(string name) => Name = name;
 
     /// <summary>
     /// Component Stuff
@@ -32,6 +33,12 @@ public class Entity
         {
             RenderManager.Instance.Register(this);
         }
+    }
+
+    public T AddComponent<T>() where T : Component, new()
+    {
+        components[typeof(T)] = new T();
+        return (T)components[typeof(T)];
     }
 
     public void RemoveComponent<T>() where T : Component => components.Remove(typeof(T));
@@ -51,7 +58,7 @@ public class Entity
             return true;
         }
 
-        component = null;
+        component = null!;
         return false;
     }
 
