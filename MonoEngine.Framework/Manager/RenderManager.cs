@@ -19,6 +19,8 @@ public class RenderManager : BaseSingleton<RenderManager> {
             Sprite sprite = entity.GetComponent<Sprite>();
             Transform transform = entity.GetComponent<Transform>();
 
+            if (sprite == null || transform == null) continue;
+            
             Texture2D texture2D = sprite.Texture;
             if (texture2D == null) continue;
 

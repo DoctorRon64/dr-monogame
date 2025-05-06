@@ -14,9 +14,12 @@ namespace MonoEngine.Framework.Manager {
             cells.Clear();
 
             foreach (Entity entity in SceneManager.Instance.Entities) {
-                Transform? transform = entity.GetComponent<Transform>();
-                Collider? collider = entity.GetComponent<Collider>();
 
+                entity.TryGetComponent<Collider>(out var collider);
+                entity.TryGetComponent<Transform>(out var transform);
+
+                if (collider == null || transform == null) continue;
+                
                 Rectangle worldBounds = new(
                     (int)(transform.Position.X + collider.Bounds.X),
                     (int)(transform.Position.Y + collider.Bounds.Y),

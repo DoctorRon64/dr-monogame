@@ -10,7 +10,6 @@ using MonoEngine.Framework;
 using MonoGame.ImGuiNet;
 using MonoEngine.Framework.components;
 using MonoEngine.Framework.Manager;
-using MonoEngine.Framework.Components;
 
 namespace MonoEngine {
     public class GameManager : Game {
@@ -47,10 +46,12 @@ namespace MonoEngine {
             SceneManager.Instance.LoadScene(gameScene);
 
             Framework.Entity entity = new Framework.Entity("Player");
-            entity.AddComponent(new RigidBody());
-            entity.AddComponent(new Velocity());
+            entity.AddComponent(new Collider());
+            entity.TryGetComponent(out Collider collider);
             entity.AddComponent(new Transform());
             entity.AddComponent(new Sprite());
+            entity.AddComponent(new PhysicsBody(collider));
+            entity.AddComponent(new RigidBody());
             SceneManager.Instance.AddEntity(entity);
 
             InputManager.BindKey(Keys.Escape, Exit);
@@ -65,8 +66,7 @@ namespace MonoEngine {
             //Under here logic!
             InputManager.Update();
             MovementManager.Instance.Update(gameTime); // Apply velocities to transforms
-            SpatialPartitionManager.Rebuild(); // Clear & rebuild spatial grid
-            CollisionSystem.Instance.Update(gameTime); // Detect and resolve collisions
+            CollisionSystem.Instance.Update(); // Detect and resolve collisions
             PhysicsSystem.Instance.Update(gameTime); // Apply forces, gravity, impulses
 
             //TODO

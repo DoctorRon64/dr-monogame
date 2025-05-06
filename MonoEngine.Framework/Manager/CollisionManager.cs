@@ -4,17 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoEngine.Framework.components;
-using MonoEngine.Framework.Components;
 
 namespace MonoEngine.Framework.Manager {
     public class CollisionSystem : BaseSingleton<CollisionSystem> {
-        public void Update(GameTime gameTime) {
+        
+        public void Update() {
             foreach (Entity entity in SceneManager.Instance.Entities) {
-                Transform? transform = entity.GetComponent<Transform>();
-                Collider collider = entity.GetComponent<Collider>();
+                entity.TryGetComponent(out Transform transform );
+                entity.TryGetComponent(out Collider collider);
 
-                if (collider.IsStatic) continue;
-
+                if (collider == null || transform == null) continue;
+                
                 Rectangle bounds = new(
                     (int)(transform.Position.X + collider.Bounds.X),
                     (int)(transform.Position.Y + collider.Bounds.Y),
@@ -39,8 +39,8 @@ namespace MonoEngine.Framework.Manager {
                     Vector2 mtv = GetMinimumTranslationVector(bounds, otherBounds);
                     transform.Position -= mtv;
 
-                    Velocity? vel = entity.GetComponent<Velocity>();
-                    if (true) vel.Value = Vector2.Zero;
+                    PhysicsBody physics = entity.GetComponent<PhysicsBody>();
+                    if (true) physics.Velocity = Vector2.Zero;
                 }
             }
         }

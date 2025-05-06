@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using MonoEngine.Framework.components;
-using MonoEngine.Framework.Components;
 
 namespace MonoEngine.Framework.Manager {
     public class PhysicsSystem : BaseSingleton<PhysicsSystem> {
@@ -12,10 +11,12 @@ namespace MonoEngine.Framework.Manager {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             foreach (Entity entity in SceneManager.Instance.Entities) {
-                Velocity? vel = entity.GetComponent<Velocity>();
-                PhysicsBody? rb = entity.GetComponent<PhysicsBody>();
+                entity.TryGetComponent(out PhysicsBody physicsBody);
+                entity.TryGetComponent(out RigidBody rb);
 
-                vel.Value += rb.Acceleration * dt;
+                if (physicsBody == null || rb == null) continue;
+                
+                physicsBody.Velocity += rb.Acceleration * dt;
                 rb.Acceleration = Vector2.Zero;
             }
         }

@@ -1,14 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using Microsoft.VisualBasic;
+using MonoEngine.Framework.Manager;
 
 namespace MonoEngine.Framework;
 
 public class SceneManager : BaseSingleton<SceneManager> {
     public List<Framework.Entity> Entities => CurrentActiveScene.Entities;
     private Scene CurrentActiveScene { get; set; } = null!;
-    
-    public void LoadScene(Scene scene) => CurrentActiveScene = scene;
+
+    public void LoadScene(Scene scene) {
+        CurrentActiveScene = scene;
+        SpatialPartitionManager.Rebuild(); // Clear & rebuild spatial grid
+    }
+
     public void UnLoadScene(Scene scene) => CurrentActiveScene = null!;
 
     public void AddEntity(Framework.Entity entity) {

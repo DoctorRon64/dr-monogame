@@ -2,11 +2,11 @@ using Microsoft.Xna.Framework;
 
 namespace MonoEngine.Framework.components;
 
-public class PhysicsBody : Component {
+public class PhysicsBody(Collider collider) : Component {
     public Vector2 Position;
     public Vector2 Velocity;
     public Vector2 Acceleration;
-    public required Collider Collider;
+    public readonly Collider Collider = collider;
 
     public void Update(float deltaTime) {
         Velocity += Acceleration * deltaTime;
