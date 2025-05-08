@@ -10,9 +10,12 @@ using MonoEngine.Framework;
 using MonoGame.ImGuiNet;
 using MonoEngine.Framework.components;
 using MonoEngine.Framework.Manager;
+using MonoEngine.Entity;
 
-namespace MonoEngine {
-    public class GameManager : Game {
+namespace MonoEngine
+{
+    public class GameManager : Game
+    {
         public ImGuiRenderer ImGuiRenderer { get; private set; }
         private readonly GraphicsDeviceManager graphics;
         private readonly Dictionary<string, IntPtr> textureMap = new();
@@ -20,7 +23,8 @@ namespace MonoEngine {
         private StateMachine<GameManager> gameStateManager;
         private Scene gameScene;
 
-        public GameManager() {
+        public GameManager()
+        {
             graphics = new(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
@@ -30,7 +34,8 @@ namespace MonoEngine {
             graphics.ApplyChanges();
         }
 
-        protected override void Initialize() {
+        protected override void Initialize()
+        {
             Console.WriteLine("Initialized GameManager");
             gameStateManager = new(this, new MainMenuState());
             gameStateManager.AddState<PlayState>();
@@ -45,20 +50,14 @@ namespace MonoEngine {
             gameScene = new();
             SceneManager.Instance.LoadScene(gameScene);
 
-            Framework.Entity entity = new Framework.Entity("Player");
-            entity.AddComponent(new Collider());
-            entity.TryGetComponent(out Collider collider);
-            entity.AddComponent(new Transform());
-            entity.AddComponent(new Sprite());
-            entity.AddComponent(new PhysicsBody(collider));
-            entity.AddComponent(new RigidBody());
-            SceneManager.Instance.AddEntity(entity);
+            Player player = new Player("Player");
 
             InputManager.BindKey(Keys.Escape, Exit);
             base.Initialize();
         }
 
-        protected override void Update(GameTime gameTime) {
+        protected override void Update(GameTime gameTime)
+        {
             float deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             ImGuiRenderer.BeginLayout(gameTime); // Start ImGui frame
@@ -80,8 +79,9 @@ namespace MonoEngine {
             base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime) {
-            Color myColor = new (0xFFFF5733);
+        protected override void Draw(GameTime gameTime)
+        {
+            Color myColor = new(0xFFFF5733);
             GraphicsDevice.Clear(myColor);
 
             RenderManager.Instance.Draw(spriteBatch); // Draw your game world
